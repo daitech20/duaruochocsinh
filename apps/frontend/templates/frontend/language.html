@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block personalInformation %}
+<div class="card mb-4">
+    <div class="card-header py-3">
+      <h5 class="mb-0">Language</h5>
+    </div>
+    <div class="card-body">
+      <div class="col-lg-7 col-md-6 mb-4 mb-lg-0">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="femaleGender"
+              value="option1" checked />
+            <label class="form-check-label" for="femaleGender">Việt Nam</label>
+          </div>
+
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="maleGender"
+              value="option2" />
+            <label class="form-check-label" for="maleGender">English</label>
+          </div>
+
+      </div>
+    </br>
+      <button type="submit" class="btn btn-primary btn-me">Save</button>
+    </div>
+</div>
+{% endblock personalInformation %}

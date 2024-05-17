@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block personalInformation %}
+<div class="card mb-4">
+    <div class="card-header py-3">
+      <h5 class="mb-0">Change password</h5>
+    </div>
+    <div class="card-body">
+      <div class="col-lg-7 col-md-6 mb-4 mb-lg-0">
+          <label>Current Password:</label>
+		    <div class="form-group pass_show">
+                <input type="password" class="form-control" placeholder="Current Password"> </p>
+            </div>
+		       <label>New Password:</label>
+            <div class="form-group pass_show">
+                <input type="password" class="form-control" placeholder="New Password"> </p>
+            </div>
+		       <label>Confirm Password:</label>
+            <div class="form-group pass_show">
+                <input type="password" class="form-control" placeholder="Confirm Password"> </p>
+            </div>
+          <button type="submit" class="btn btn-primary btn-me">Save</button>
+      </div>
+
+    </div>
+</div>
+{% endblock personalInformation %}

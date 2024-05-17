@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block cart %}
+<section>
+  <div class="row">
+    <div class="col-2">
+      <div class="card">
+        <a href="{% url 'ongoing'%}" class="btn btn-primary">On Going</a>
+
+        <div class="card-body">
+          <h5 class="card-title">Tuyến đường đi</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Địa điểm 1</li>
+            <li class="list-group-item">Địa điểm 2</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Trạm</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Trạm 1</li>
+            <li class="list-group-item">Trạm 2</li>
+            <li class="list-group-item">Trạm 3</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.51036180692!2d106.78445327336814!3d10.848733189304461!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752713471f5b15%3A0x1d5dddea640dad31!2zOTcgxJAuIE1hbiBUaGnhu4duLCBIaeG7h3AgUGjDuiwgUXXhuq1uIDksIFRow6BuaCBwaOG7kSBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1714053135713!5m2!1svi!2s"
+        width="100%" height="400" frameborder="0" style="border:0" allowfullscreen>
+      </iframe>
+    </div>
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Thông tin chuyến đi</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">Thông tin xe:</li>
+                <li class="list-group-item">Tên tài xế:</li>
+                <li class="list-group-item">Tên nhân viên:</li>
+                <li class="list-group-item">Thời gian bắt đầu đi:</li>
+              </ul>
+            </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">
+              Trạng thái hiện tại
+              <div><a> Date: </a></div>
+            </h5>
+            <hr>
+            <div class="horizontal-timeline">
+                <ul class="list-inline items">
+                  <li class="list-inline-item items-list">
+                    <div class="px-4 text-center">
+                      <div class="badge bg-info">.</div>
+                      <h5 class="pt-2 fs-6 fw-normal">Đang di chuyển</h5>
+                    </div>
+                  </li>
+                  <li class="list-inline-item items-list">
+                    <div class="px-4 text-center">
+                      <div class="badge bg-info">.</div>
+                      <h5 class="pt-2 fs-6 fw-normal">Đã đến trạm</h5>
+                    </div>
+                  </li>
+                  <li class="list-inline-item items-list">
+                    <div class="px-4 text-center">
+                      <div class="badge bg-info">.</div>
+                      <h5 class="pt-2 fs-6 fw-normal">Đã đến điểm trả</h5>
+                    </div>
+                  </li>
+                </ul>
+            </div>
+            <hr>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">STT</th>
+                  <th scope="col">Tên học sinh</th>
+                  <th scope="col">Tên phụ huynh</th>
+                  <th scope="col">Số điện thoại</th>
+                  <th scope="col">Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td>Mark</td>
+                  <td>Otto</td>
+                  <td>0123</td>
+                  <td>
+                    <!-- Button trigger modal -->
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Chưa đón
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Điểm danh học sinh</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row align-items-start">
+            <div class="col">
+              <img src="{% static 'app/images/baby.jpg'%}" class="img-thumbnail" alt="...">
+            </div>
+            <div class="col">
+              <div>Họ và tên: </div>
+              <div>Tuổi: </div>
+            </div>
+            <div class="col">
+              <a> Trạng thái: </a>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+                <label class="form-check-label" for="exampleRadios1">
+                  Chưa đón
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+                <label class="form-check-label" for="exampleRadios2">
+                  Đã đón
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3">
+                <label class="form-check-label" for="exampleRadios3">
+                  Đã rời xe
+                </label>
+              </div>
+              <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Lý do:</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>Jacob</td>
+                  <td>Thornton</td>
+                  <td>0153</td>
+                  <td>
+                    <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Đã đón
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Điểm danh học sinh</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row align-items-start">
+            <div class="col">
+              <img src="{% static 'app/images/baby.jpg'%}" class="img-thumbnail" alt="...">
+            </div>
+            <div class="col">
+              <div>Họ và tên: </div>
+              <div>Tuổi: </div>
+            </div>
+            <div class="col">
+              <a> Trạng thái: </a>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+                <label class="form-check-label" for="exampleRadios1">
+                  Chưa đón
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2" >
+                <label class="form-check-label" for="exampleRadios2">
+                  Đã đón
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3">
+                <label class="form-check-label" for="exampleRadios3">
+                  Đã rời xe
+                </label>
+              </div>
+              <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Lý do:</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>Larry the Bird</td>
+                  <td>Thornton</td>
+                  <td>02353</td>
+                  <td>
+                    <!-- Button trigger modal -->
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Đã rời xe
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Điểm danh học sinh</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row align-items-start">
+            <div class="col">
+              <img src="{% static 'app/images/baby.jpg'%}" class="img-thumbnail" alt="...">
+            </div>
+            <div class="col">
+              <div>Họ và tên: </div>
+              <div>Tuổi: </div>
+            </div>
+            <div class="col">
+              <a> Trạng thái: </a>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+                <label class="form-check-label" for="exampleRadios1">
+                  Chưa đón
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+                <label class="form-check-label" for="exampleRadios2">
+                  Đã đón
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3">
+                <label class="form-check-label" for="exampleRadios3">
+                  Đã rời xe
+                </label>
+              </div>
+              <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Lý do:</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Lịch sử trạng thái</h5>
+              <div> <label>Date</label> <input type="text" class="form-control"> </div>
+              <hr>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">Tên học sinh</th>
+                    <th scope="col">Tên phụ huynh</th>
+                    <th scope="col">Số điện thoại</th>
+                    <th scope="col">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>0123</td>
+                    <td>Đã đón</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>0153</td>
+                    <td>Đã đón</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Larry the Bird</td>
+                    <td>Thornton</td>
+                    <td>02353</td>
+                    <td>Chưa đón</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+{% endblock cart %}

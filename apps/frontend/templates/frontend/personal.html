@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block cart %}
+<div class="container">
+    <div class="row">
+		<div class="col-3">
+            <ul class="list-group list-group-flush">
+                <li><a class="list-group-item" href="{% url 'perInfor'%}">Personal Information</a></li>
+                <li><a class="list-group-item" href="{% url 'yourChild'%}">Your children information</a></li>
+                <li><a class="list-group-item" href="{% url 'saveAddress'%}">Saved Address</a></li>
+                <li><a class="list-group-item" href="{% url 'payment'%}">Payment</a></li>
+                <li><a class="list-group-item" href="{% url 'invoiceInfor'%}">Invoice information</a></li>
+                <li><a class="list-group-item" href="{% url 'termPolicy'%}">Term & Policy</a></li>
+                <li><a class="list-group-item" href="{% url 'support'%}">Support</a></li>
+                <li><a class="list-group-item" href="{% url 'changePW'%}">Change password</a></li>
+                <li><a class="list-group-item" href="{% url 'language'%}">Language</a></li>
+                <li><a class="list-group-item" href="{% url 'logout'%}">Log out</a></li>
+            </ul>
+        </div>
+
+        <div class="col-7">
+            {% block personalInformation %} {% endblock personalInformation %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock cart %}

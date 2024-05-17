@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block personalInformation %}
+<div class="card mb-4">
+    <div class="card-header py-3">
+      <h5 class="mb-0">Invoice Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="col-lg-7 col-md-6 mb-4 mb-lg-0">
+          <!-- Data -->
+          <p>Tên trường: </p>
+          <p>Địa chỉ trường: </p>
+          <p>Mã số thuế: </p>
+          <p>Email nhận hóa đơn: </p>
+          <!-- Data -->
+          <button type="submit" class="btn btn-primary btn-me">Save</button>
+      </div>
+
+    </div>
+</div>
+{% endblock personalInformation %}
