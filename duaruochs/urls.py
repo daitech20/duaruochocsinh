@@ -23,5 +23,7 @@ from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("select2/", include("django_select2.urls")),
+    path("address/", include("apps.address.urls")),
     path("", include('frontend.urls', namespace="frontend")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

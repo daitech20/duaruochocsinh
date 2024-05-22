@@ -1,65 +1,355 @@
-{% extends 'base.html' %}
+{% extends 'frontend/personal.html' %}
 {% load static %}
 {% block personalInformation %}
 <br>
 <h2> THÔNG TIN CÁ NHÂN </h2>
 </br>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
     <div class="form-outline">
-        {{form.first_name}}
-        <label class="form-label" for="form3Example1">First name:</label>
+        <label class="form-label" for="form3Example1">Họ tên:</label>
+        {{ user_form.full_name }}
     </div>
     <hr class="mx-n3">
 
     <div class="form-outline">
-        {{form.last_name}}
-        <label class="form-label" for="form3Example2">Last name:</label>
-    </div>
-    <hr class="mx-n3">
-
-    <div class="form-outline">
-        <label class="form-label" for="form3Example2">Address:</label>
-    </div>
-    <hr class="mx-n3">
-
-    <div class="form-outline">
-        <label class="form-label" for="form3Example3">Phone number:</label>
-        {{form.username}}
+        <label class="form-label" for="form3Example3">Số điện thoại:</label>
+        {{user.phone}}
     </div>
     <hr class="mx-n3">
 
     <div class="form-outline">
         <label class="form-label" for="form3Example3">Email:</label>
-        {{form.email}}
+        {{user.email}}
     </div>
-    <hr class="mx-n3">
 
-    <div class="row align-items-center py-3">
+    {% if profile_formset %}
+    {{ profile_formset.management_form }}
+    {% for form in profile_formset %}
+        <hr class="mx-n3">
+        <h3>Thông tin khách hàng</h3>
         <div class="form-outline">
-            <label class="form-label" for="form3Example3">Upload CCCD/CMND:</label>
-        </div>
-        <div class="col-md-9 pe-5">
-            <input class="form-control form-control-sm" id="formFileLg" type="file" />
-            <div class="small text-muted mt-2">Upload front page image. Max file size 50 MB</div>
-        </p>
-            <input class="form-control form-control-sm" id="formFileLg" type="file" />
-            <div class="small text-muted mt-2">Upload back page image. Max file size 50 MB</div>
-        </div>
-    </div>
-    <hr class="mx-n3">
+            <label class="form-label" for="id_province">Tỉnh thành:</label>
+            <select id="id_province" class="form-control">
+                <option value="">Choose a province</option>
+            </select>
+            <hr class="mx-n3">
+            <label class="form-label" for="id_district">Quận/Huyện:</label>
+            <select id="id_district" class="form-control">
+                <option value="">Choose a district</option>
+            </select>
+            <hr class="mx-n3">
+            <label class="form-label" for="id_ward">Phường/Xã:</label>
+            <select id="id_ward" class="form-control" onchange="updateAddressField(this)">
+                <option value="">Choose a ward</option>
+            </select>
 
-    <div class="form-outline">
-        <label class="form-label" for="form3Example2">Birth:</label>
-    </div>
-    <hr class="mx-n3">
+            <input type="hidden" id="id_customers-0-address" name="customers-0-address">
 
-    <div class="form-outline">
-        <label class="form-label" for="form3Example2">School representative:</label>
-    </div>
-    <hr class="mx-n3">
+            <hr class="mx-n3">
+            <label class="form-label" for="form3Example3">Địa chỉ chi tiết:</label>
+                {{ form.address2 }}
+
+        </div>
+        <hr class="mx-n3">
+        <div class="form-outline">
+            <label class="form-label" for="form3Example2">Sinh nhật:</label>
+            {{ form.date_of_birth }}
+        </div>
+        <hr class="mx-n3">
+
+        <!-- CCCD -->
+        <div class="form-outline">
+            <label class="form-label" for="form3Example4">Số căn cước công dân: </label>
+            {{ citizen_identification_form.code }}
+        </div>
+        <hr class="mx-n3">
+        <div class="form-outline">
+            <label class="form-label" for="form3Example5">Mặt trước:</label>
+            {{ citizen_identification_form.front }}
+        </div>
+        <hr class="mx-n3">
+        <div class="form-outline">
+            <label class="form-label" for="form3Example6">Mặt sau:</label>
+            {{ citizen_identification_form.back }}
+        </div>
+        <hr class="mx-n3">
+        <!-- CCCD -->
+
+        <!-- SCHOOL -->
+        <h4>Đơn vị đại diện</h4>
+        <div class="form-outline">
+            <label class="form-label" for="form3Example4">Tên đơn vị đại diện: </label>
+            {{ representative_unit_form.name }}
+        </div>
+        <hr class="mx-n3">
+        <div class="form-outline">
+            <label class="form-label" for="form3Example5">Số điện thoại: </label>
+            {{ representative_unit_form.phone }}
+        </div>
+        <div class="form-outline">
+            <label class="form-label" for="id_province2">Tỉnh thành:</label>
+            <select id="id_province2" class="form-control">
+                <option value="">Choose a province</option>
+            </select>
+            <hr class="mx-n3">
+            <label class="form-label" for="id_district2">Quận/Huyện:</label>
+            <select id="id_district2" class="form-control">
+                <option value="">Choose a district</option>
+            </select>
+            <hr class="mx-n3">
+            <label class="form-label" for="id_ward2">Phường/Xã:</label>
+            <select id="id_ward2" class="form-control" onchange="updateAddressField2(this)">
+                <option value="">Choose a ward</option>
+            </select>
+            <input type="hidden" id="id_address" name="address">
+
+        </div>
+        <hr class="mx-n3">
+        <!-- SCHOOL -->
+
+        {{ form.id }}
+        {{ form.user }}
+
+    {% endfor %}
+    {% endif %}
+
+    {% if user_errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field, errors in user_errors.items %}
+                <strong>{{ field|title }}</strong>: {{ errors|join:", " }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if profile_errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for form_errors in profile_errors %}
+                {% for field, errors in form_errors.items %}
+                    <strong>{{ field|title }}</strong>: {{ errors|join:", " }}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if citizen_identification_errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field, errors in citizen_identification_errors.items %}
+                <strong>{{ field|title }}</strong>: {{ errors|join:", " }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if representative_unit_errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field, errors in representative_unit_errors.items %}
+                <strong>{{ field|title }}</strong>: {{ errors|join:", " }}
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <div class="px-5 py-4">
         <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg">Update</button>
     </div>
+</form>
+<script>
+    $(document).ready(function() {
+        // Initialize Select2 for province, district, and ward dropdowns
+        $('#id_province').select2();
+        $('#id_district').select2();
+        $('#id_ward').select2();
 
+        // Initialize Select2 for province, district, and ward dropdowns
+        $('#id_province2').select2();
+        $('#id_district2').select2();
+        $('#id_ward2').select2();
 
+        const addressField = document.getElementById('id_customers-0-address');
+        addressField.value = "{{ initial_ward_id }}";
+        const addressField2 = document.getElementById('id_address');
+        addressField2.value = "{{ initial_representative_unit_ward_id }}";
+
+        // Load initial province, district, and ward values
+        const initialProvinceId = "{{ initial_province_id }}";
+        const initialDistrictId = "{{ initial_district_id }}";
+        const initialWardId = "{{ initial_ward_id }}";
+
+        const initialProvinceId2 = "{{ initial_representative_unit_province_id }}";
+        const initialDistrictId2 = "{{ initial_representative_unit_district_id }}";
+        const initialWardId2 = "{{ initial_representative_unit_ward_id }}";
+
+        // AJAX to populate province dropdown
+        $.ajax({
+            url: '/address/api/v1/list-province',
+            dataType: 'json',
+            success: function(data){
+                var provinces = data.data;
+                $('#id_province').empty();
+                $('#id_province').append('<option value="">Choose a province</option>');
+                $.each(provinces, function(key, value){
+                    var selected = value.code == initialProvinceId ? 'selected' : '';
+                    $('#id_province').append('<option value="' + value.code + '" ' + selected + '>' + value.name + '</option>');
+                });
+                if (initialProvinceId) {
+                    loadDistricts(initialProvinceId, initialDistrictId, function() {
+                        if (initialDistrictId) {
+                            loadWards(initialDistrictId, initialWardId);
+                        }
+                    });
+                }
+            }
+        });
+
+        // Event listener for province change
+        $('#id_province').change(function(){
+            var provinceId = $(this).val();
+            loadDistricts(provinceId);
+        });
+
+        // Event listener for district change
+        $('#id_district').change(function(){
+            var districtId = $(this).val();
+            loadWards(districtId);
+        });
+
+        // Function to load districts based on selected province
+        function loadDistricts(provinceId, selectedDistrictId, callback) {
+            $.ajax({
+                url: '/address/api/v1/list-district',
+                data: {
+                    'province_code': provinceId
+                },
+                dataType: 'json',
+                success: function(data){
+                    var districts = data.data;
+                    $('#id_district').empty();
+                    $('#id_district').append('<option value="">Choose a district</option>');
+                    $.each(districts, function(key, value){
+                        var selected = value.code == selectedDistrictId ? 'selected' : '';
+                        $('#id_district').append('<option value="' + value.code + '" ' + selected + '>' + value.name + '</option>');
+                    });
+                    if (callback) {
+                        callback();
+                    }
+                }
+            });
+        }
+
+        // Function to load wards based on selected district
+        function loadWards(districtId, selectedWardId) {
+            $.ajax({
+                url: '/address/api/v1/list-ward',
+                data: {
+                    'district_code': districtId
+                },
+                dataType: 'json',
+                success: function(data){
+                    var wards = data.data;
+                    $('#id_ward').empty();
+                    $('#id_ward').append('<option value="">Choose a ward</option>');
+                    $.each(wards, function(key, value){
+                        var selected = value.id == selectedWardId ? 'selected' : '';
+                        $('#id_ward').append('<option value="' + value.id + '" ' + selected + '>' + value.name + '</option>');
+                    });
+                }
+            });
+        }
+        // Update hidden address field when ward is selected
+        $('#id_ward').change(function(){
+            updateAddressField(this);
+        });
+
+        function updateAddressField(selectElement) {
+            const addressField = document.getElementById('id_customers-0-address');
+            addressField.value = selectElement.value;
+        }
+
+        // School
+        // AJAX to populate province dropdown
+        $.ajax({
+            url: '/address/api/v1/list-province',
+            dataType: 'json',
+            success: function(data){
+                var provinces = data.data;
+                $('#id_province2').empty();
+                $('#id_province2').append('<option value="">Choose a province</option>');
+                $.each(provinces, function(key, value){
+                    var selected = value.code == initialProvinceId2 ? 'selected' : '';
+                    $('#id_province2').append('<option value="' + value.code + '" ' + selected + '>' + value.name + '</option>');
+                });
+                if (initialProvinceId2) {
+                    loadDistricts2(initialProvinceId2, initialDistrictId2, function() {
+                        if (initialDistrictId2) {
+                            loadWards2(initialDistrictId2, initialWardId2);
+                        }
+                    });
+                }
+            }
+        });
+
+        // Event listener for province change
+        $('#id_province2').change(function(){
+            var provinceId = $(this).val();
+            loadDistricts2(provinceId);
+        });
+
+        // Event listener for district change
+        $('#id_district2').change(function(){
+            var districtId = $(this).val();
+            loadWards2(districtId);
+        });
+
+        // Function to load districts based on selected province
+        function loadDistricts2(provinceId, selectedDistrictId, callback) {
+            $.ajax({
+                url: '/address/api/v1/list-district',
+                data: {
+                    'province_code': provinceId
+                },
+                dataType: 'json',
+                success: function(data){
+                    var districts = data.data;
+                    $('#id_district2').empty();
+                    $('#id_district2').append('<option value="">Choose a district</option>');
+                    $.each(districts, function(key, value){
+                        var selected = value.code == selectedDistrictId ? 'selected' : '';
+                        $('#id_district2').append('<option value="' + value.code + '" ' + selected + '>' + value.name + '</option>');
+                    });
+                    if (callback) {
+                        callback();
+                    }
+                }
+            });
+        }
+
+        // Function to load wards based on selected district
+        function loadWards2(districtId, selectedWardId) {
+            $.ajax({
+                url: '/address/api/v1/list-ward',
+                data: {
+                    'district_code': districtId
+                },
+                dataType: 'json',
+                success: function(data){
+                    var wards = data.data;
+                    $('#id_ward2').empty();
+                    $('#id_ward2').append('<option value="">Choose a ward</option>');
+                    $.each(wards, function(key, value){
+                        var selected = value.id == selectedWardId ? 'selected' : '';
+                        $('#id_ward2').append('<option value="' + value.id + '" ' + selected + '>' + value.name + '</option>');
+                    });
+                }
+            });
+        }
+        // Update hidden address field when ward is selected
+        $('#id_ward2').change(function(){
+            updateAddressField2(this);
+        });
+
+        function updateAddressField2(selectElement) {
+            const addressField = document.getElementById('id_address');
+            addressField.value = selectElement.value;
+        }
+    });
+</script>
 {% endblock personalInformation %}

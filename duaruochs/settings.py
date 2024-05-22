@@ -44,11 +44,19 @@ _DJANGO_FRAMEWORK_APPS = [
 ]
 
 _THIRD_PARTY_APPS = [
-
+    'django_select2',
+    'rest_framework',
+    'django_filters',
 ]
 
 _PROJECT_APPS = [
     'frontend',
+    'address',
+    'account',
+    'service',
+    'notification',
+    'payment',
+    'order',
 ]
 
 INSTALLED_APPS = _DJANGO_FRAMEWORK_APPS + _THIRD_PARTY_APPS + _PROJECT_APPS
@@ -89,12 +97,15 @@ WSGI_APPLICATION = "duaruochs.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'duaruoc',
+        'USER': 'root',
+        'PASSWORD': 'Dai12321!',
+        'HOST': '192.168.101.129',  # Địa chỉ của MySQL server, 'localhost' cho cài đặt cục bộ
+        'PORT': '3306',       # Cổng mặc định của MySQL
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -113,6 +124,10 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+
+AUTH_USER_MODEL = "account.User"
+AUTHENTICATION_BACKENDS = ["account.backends.PhoneAuthenticationBackend"]
 
 
 # Internationalization

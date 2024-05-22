@@ -18,7 +18,8 @@
         <script src="{% static 'frontend/js/all.min.js'%}"></script>
         <script src="{% static 'frontend/js/myscript.js'%}"></script>
         <script src="{% static 'frontend/js/owl.carousel.min.js'%}"></script>
-
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     </head>
 
     <body>
@@ -43,7 +44,7 @@
                   </li>
 
                   <li class="nav-item">
-                    {% if user.username %}
+                    {% if user %}
                     <a class="nav-link" href="{% url 'frontend:ongoing'%}">Activity</a>
                     {% else %}
                     <a class="nav-link disabled" aria-disabled="true">Activity</a>
@@ -59,7 +60,7 @@
                   </li>
                 </ul>
 
-                <form class="d-flex" role="search" method = POST action = "{%url 'frontend:search'%}">
+                <form class="d-flex" role="search" method = POST action = "{% url 'frontend:search' %}">
                   {% csrf_token %}
                   <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name = "searched">
                   <button class="btn btn-outline-success" type="submit">Search</button>
@@ -69,28 +70,29 @@
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
                 <div class="nav-link">
-                {% if user.username %}
-                <a href="{% url 'cart' %}">
-                  <i class="fas fa-shopping-cart"></i>
-              </a>
-                <span> Hello! <a class="nav-item" href= "{% url 'perInfor'%}"> {{request.user}} </a> </span>
+                {% if user.full_name %}
+                  <a href="{% url 'frontend:cart' %}">
+                      <i class="fas fa-shopping-cart"></i>
+                  </a>
+                  <span> Hello! <a class="nav-item" href= "{% url 'frontend:perInfor'%}"> {{request.user.full_name}} </a> </span>
 
                 {% else %}
                     <a class="nav-link badge text-bg-primary text-wrap" href= "{% url 'frontend:login'%}"> Log in </a>
                     <a class="nav-link badge text-bg-warning text-wrap" href= "{% url 'frontend:register'%}"> Sign up </a>
                 {% endif %}
+
                 </div>
 
               </ul>
             </div>
           </nav>
         <!--MAIN BODY-->
-        {%block banner%} {%endblock banner%}
-        {%block main-content%} {%endblock main-content%}
-        {%block cart%} {%endblock cart%}
+        {% block banner %} {% endblock banner%}
+        {% block main-content %} {% endblock main-content %}
+        {% block cart %} {% endblock cart%}
         {% block checkout %} {% endblock checkout %}
-        {%block register%} {%endblock register%}
-        {%block login%} {%endblock login%}
+        {% block register %} {% endblock register %}
+        {% block login %} {% endblock login %}
         <!--FOOTER-->
   <footer
           class="text-center text-lg-start text-white"
