@@ -7,28 +7,33 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Tìm đường đi</h5>
-          <input type="search" class="form-control rounded" placeholder="Địa điểm bắt đầu" aria-label="Search" aria-describedby="search-addon" />
-          <input type="search" class="form-control rounded" placeholder="Địa điểm kết thúc" aria-label="Search" aria-describedby="search-addon" />
+          <div style="padding-bottom: 10px;">
+            <label>Điểm bắt đầu</label>
+              <select id="html_select_starting_point" style="width: 100%;">
+                <option></option>
+              </select>
+          </div>
+          <div>
+            <label>Điểm kết thúc</label>
+              <select id="html_select_ending_point" style="width: 100%;">
+                <option></option>
+              </select>
+          </div>
         </div>
       </div>
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Tuyến đường đi</h5>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">Địa điểm 1</li>
-            <li class="list-group-item">Địa điểm 2</li>
-            <li class="list-group-item">Địa điểm 3</li>
-          </ul>
+          <div id="html_select_list_router">
+          </div>
         </div>
       </div>
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Trạm</h5>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">Trạm 1</li>
-            <li class="list-group-item">Trạm 2</li>
-            <li class="list-group-item">Trạm 3</li>
-          </ul>
+          <div id="html_list_detail_router">
+
+          </div>
         </div>
       </div>
     </div>
@@ -112,5 +117,178 @@
     </div>
   </div>
 </section>
+<script>
+  let origin_url = window.location.origin;
+  let list_starting_point=[];
+  let list_ending_point=[];
+  let list_router=[];
+  let pickup;
+  let detail_router;
+  let sort_stop_station=[];
+  let html_select_starting_point = document.getElementById('html_select_starting_point');
+  let html_select_ending_point = document.getElementById('html_select_ending_point');
+  let html_select_list_router = document.getElementById('html_select_list_router');
+  let html_list_detail_router = document.getElementById('html_list_detail_router');
 
+  //event load data starting point
+  load_data_starting_point();
+  // event load data ending point
+  load_data_router();
+  // event select starting point
+  html_select_starting_point.addEventListener('change', function() {
+    display_ending_point(html_select_starting_point.value);
+    pickup=html_select_starting_point.value;
+  });
+   // event select ending point
+   html_select_ending_point.addEventListener('change', function() {
+    display_router(html_select_ending_point.value);
+  });
+
+  async function display_stop_station(id){
+    html_list_detail_router.innerHTML = ``;
+    detail_router=await fetch_detail_stop_station(id);
+        const div = document.createElement('div');
+        var list_detail_chirden_station = '';
+        sort_stop_station=detail_router.route_detail;
+        sort_stop_station.sort((a, b) => a.sequence - b.sequence);
+        sort_stop_station.forEach(function (item) {
+          list_detail_chirden_station += `
+            <div style="padding: 5px; border-bottom: 1px solid;">
+              <span>${item?.station?.name}</span>
+            </div>
+          `;
+        });
+        div.innerHTML = `
+            <div style="padding: 5px; border-bottom: 1px solid;">
+              <span>${detail_router?.pickup?.name}</span>
+            </div>
+            <div>
+              ${list_detail_chirden_station}
+            <div>
+            <div style="padding: 5px; border-bottom: 1px solid;">
+              <span>${detail_router?.dropoff?.name}</span>
+            </div>
+         `;
+    html_list_detail_router.appendChild(div);
+
+  
+    var pickup=detail_router?.pickup;
+    var dropoff=detail_router?.dropoff;
+
+    const url_map = 'https://www.google.com/maps/dir/';
+    let url = `${url_map}${pickup.latitude},${pickup.longitude}`;
+    sort_stop_station.forEach(item => {
+        url += `/${item?.station?.latitude},${item?.station?.longitude}`;
+    });
+    url += `/${dropoff.latitude},${dropoff.longitude}`;
+    
+    window.open(`${url}`, '_blank', 'width=800,height=600');
+  }
+  async function fetch_detail_stop_station(id) {
+    return fetch(`${origin_url}/service/api/v1/get-route/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.data) {return data.data;}
+            throw new Error('No data found');
+        })
+        .catch(error => {
+            console.error(error);
+            throw error;
+        });
+  }
+
+  function display_router(dropoff){
+    html_select_list_router.innerHTML = ``;
+    html_list_detail_router.innerHTML = ``;
+    const list_router_dislay= list_router.filter(item => item.pickup == pickup&&item.dropoff == dropoff);
+    list_router_dislay.forEach(function (item) {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <div style="padding: 5px; border-bottom: 1px solid;">
+            <span>${item.name}</span>
+          </div>
+         `;
+         div.addEventListener('click', function () {
+            display_stop_station(item.id);
+
+         });
+         html_select_list_router.appendChild(div);
+        })
+  }
+
+  async function display_ending_point(id){
+    const list_id_ending_point = list_router.filter(item => item.pickup == id);
+    html_select_ending_point.innerHTML=`<option></option>`;
+    html_select_list_router.innerHTML = ``;
+    html_list_detail_router.innerHTML = ``;
+    if(list_id_ending_point.length!==0){
+      list_ending_point=[];
+      for(const item of list_id_ending_point){
+        let data= await fetch_detail_ending_point(item.dropoff);
+        list_ending_point.push(data);
+      }
+      list_ending_point.forEach(function (item) {
+          const opi = document.createElement('option');
+          opi.value = item.id;
+          opi.text = item.name;
+          html_select_ending_point.appendChild(opi);
+        })
+    }
+  }
+  async function fetch_detail_ending_point(id) {
+    return fetch(`${origin_url}/service/api/v1/get-station/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.data) {return data.data;}
+            throw new Error('No data found');
+        })
+        .catch(error => {
+            console.error(error);
+            throw error;
+        });
+  }
+  
+  function load_data_starting_point(){
+    fetch_data_starting_point();
+    function fetch_data_starting_point(id) {
+      return fetch(`${origin_url}/service/api/v1/list-station`)
+          .then(response => response.json())
+          .then(data => {
+              if(data.data){display_starting_point(data);}
+              throw new Error('No data found');
+          })
+          .catch(error => {
+              console.error(error);
+              throw error;
+          });
+    }
+    function display_starting_point(data){
+      if(data.data){
+        list_starting_point=data.data;
+        list_starting_point.forEach(function (item) {
+          const opi = document.createElement('option');
+          opi.value = item.id;
+          opi.text = item.name;
+          html_select_starting_point.appendChild(opi);
+        })
+      }
+    }
+  }
+  
+  function load_data_router(){
+    fetch_data_router();
+    function fetch_data_router(id) {
+      return fetch(`${origin_url}/service/api/v1/list-route`)
+          .then(response => response.json())
+          .then(data => {
+              if(data.data){ list_router=data.data;}
+              throw new Error('No data found');
+          })
+          .catch(error => {
+              console.error(error);
+              throw error;
+          });
+    }
+  }
+</script>
 {% endblock cart %}
