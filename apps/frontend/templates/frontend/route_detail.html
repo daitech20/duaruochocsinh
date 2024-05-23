@@ -1,0 +1,75 @@
+{% extends 'frontend/personal.html' %}
+{% load static %}
+{% block personalInformation %}
+
+<div class="card mb-4">
+    <div class="card-header py-3">
+      <h5 class="mb-0">Chuyến đi {{ route.name }}</h5>
+    </div>
+    <div class="card-body">
+        <p>Điểm đón: {{ route.pickup.name }}</p>
+        <p>Điểm trả: {{ route.dropoff.name }}</p>
+
+        <h5>Chi tiết chuyến đi:</h5>
+        <ul id="route-details-list">
+            <li>Thứ tự: 1 - Trạm: {{ route.pickup.name }}</li>
+            {% for detail in route_details %}
+                <li>Thứ tự: {{ detail.sequence }} - Trạm: {{ detail.station.name }}
+                    <button type="button" onclick="deleteRouteDetail({{ detail.id }})">Xóa</button>
+                </li>
+            {% endfor %}
+            <li>Thứ tự: {{ route.route_detail.count|add:2 }} - Trạm: {{ route.dropoff.name }}</li>
+        </ul>
+
+        <h5>Thêm trạm</h5>
+        <form id="add-route-detail-form">
+            <input type="hidden" id="route-id" value="{{ route.id }}">
+            <label for="station">Station:</label>
+            <select id="station">
+                {% for station in stations %}
+                    <option value="{{ station.id }}">{{ station.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="button" onclick="addRouteDetail()">Add Station</button>
+        </form>
+    </div>
+</div>
+<script>
+    function addRouteDetail() {
+        var routeId = $('#route-id').val();
+        var stationId = $('#station').val();
+        var sequence = $('#route-details-list li').length;
+        $.ajax({
+            url: '/service/api/v1/add-route-detail',
+            method: 'POST',
+            data: {
+                route: routeId,
+                station: stationId,
+                sequence: sequence
+            },
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            success: function(data) {
+                window.location.reload();
+            }
+        });
+    }
+
+    function deleteRouteDetail(detailId) {
+        $.ajax({
+            url: '/service/api/v1/delete-route-detail/' + detailId,
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            success: function(data) {
+                $('#detail-' + detailId).remove();
+                window.location.reload();
+            }
+        });
+    }
+
+</script>
+
+{% endblock personalInformation %}

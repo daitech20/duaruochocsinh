@@ -20,6 +20,7 @@
         <script src="{% static 'frontend/js/owl.carousel.min.js'%}"></script>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh06HuFYVgy1t6Kp4gM2Pun29ZDxsbgzE"></script>
     </head>
 
     <body>
@@ -45,7 +46,7 @@
 
                   <li class="nav-item">
                     {% if user %}
-                    <a class="nav-link" href="{% url 'frontend:ongoing'%}">Activity</a>
+                    <a class="nav-link" href="{% url 'frontend:schedule'%}">Activity</a>
                     {% else %}
                     <a class="nav-link disabled" aria-disabled="true">Activity</a>
                     {% endif %}

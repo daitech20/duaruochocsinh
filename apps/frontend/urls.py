@@ -30,6 +30,9 @@ urlpatterns = [
     path('language/', views.language, name="language"),
 
     path('cart/', views.cart, name="cart"),
-    path('checkout/', views.checkout, name="checkout")
-
+    path('checkout/', views.checkout, name="checkout"),
+    path('vehicle/', views.vehicle, name="vehicle"),
+    path('station/', views.station, name="station"),
+    path('route/', views.route, name="route"),
+    path('route/<int:route_id>/', views.route_detail_view, name='route_detail_view'),
 ]

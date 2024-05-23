@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from account.models import (CitizenIdentification, Customer,
-                            RepresentativeUnit, User)
+                            RepresentativeUnit, Student, User)
 from django.contrib import admin
 
 
@@ -48,4 +48,17 @@ class RepresentativeUnitAdmin(admin.ModelAdmin):
         'name',
         'address',
         'phone'
+    )
+
+
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'gender',
+        'classroom',
+        'full_name',
+        'date_of_birth',
+        'image',
+        'customer'
     )

@@ -6,14 +6,23 @@
 		<div class="col-3">
             <ul class="list-group list-group-flush">
                 <li><a class="list-group-item" href="{% url 'frontend:perInfor'%}">Personal Information</a></li>
+                {% if user.customers %}
                 <li><a class="list-group-item" href="{% url 'frontend:yourChild'%}">Your children information</a></li>
-                <li><a class="list-group-item" href="{% url 'frontend:saveAddress'%}">Saved Address</a></li>
+                {% endif %}
                 <li><a class="list-group-item" href="{% url 'frontend:payment'%}">Payment</a></li>
-                <li><a class="list-group-item" href="{% url 'frontend:invoiceInfor'%}">Invoice information</a></li>
                 <li><a class="list-group-item" href="{% url 'frontend:termPolicy'%}">Term & Policy</a></li>
                 <li><a class="list-group-item" href="{% url 'frontend:support'%}">Support</a></li>
                 <li><a class="list-group-item" href="{% url 'frontend:changePW'%}">Change password</a></li>
                 <li><a class="list-group-item" href="{% url 'frontend:language'%}">Language</a></li>
+                {% if user.is_staff %}
+                <li><a class="list-group-item" href="{% url 'frontend:vehicle'%}">Vehicle</a></li>
+                {% endif %}
+                {% if user.is_staff %}
+                <li><a class="list-group-item" href="{% url 'frontend:station'%}">Station</a></li>
+                {% endif %}
+                {% if user.is_staff %}
+                <li><a class="list-group-item" href="{% url 'frontend:route'%}">Route</a></li>
+                {% endif %}
                 <li><a class="list-group-item" href="{% url 'frontend:logout'%}">Log out</a></li>
             </ul>
         </div>

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'frontend/activity.html' %}
 {% load static %}
 {% block ongoing %}
 <div class="container">
@@ -18,13 +18,13 @@
                             </ul>
                         </div>
                         <div class="col-3">
-                          <a class="btn btn-primary" href="{% url 'tripHistory'%}">
+                          <a class="btn btn-primary" href="{% url 'frontend:tripHistory'%}">
                             Lịch sử chuyến đi
                           </a>
                         </div>
                     </div>
                     <div>
-                      <a href="{% url 'service'%}" class="btn btn-sm btn-success shadow-0"> Đặt lại </a>
+                      <a href="{% url 'frontend:service'%}" class="btn btn-sm btn-success shadow-0"> Đặt lại </a>
                     </div>
                 </li>
                 <li class="list-group-item">
@@ -40,13 +40,13 @@
                           </ul>
                       </div>
                       <div class="col-3">
-                        <a class="btn btn-primary" href="{% url 'tripHistory'%}">
+                        <a class="btn btn-primary" href="{% url 'frontend:tripHistory'%}">
                           Lịch sử chuyến đi
                         </a>
                       </div>
                   </div>
                   <div>
-                    <a href="{% url 'service'%}" class="btn btn-sm btn-success shadow-0"> Đặt lại </a>
+                    <a href="{% url 'frontend:service'%}" class="btn btn-sm btn-success shadow-0"> Đặt lại </a>
                   </div>
               </li>
             </ul>

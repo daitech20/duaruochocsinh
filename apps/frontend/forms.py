@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from account.models import (CitizenIdentification, Customer,
-                            RepresentativeUnit, User)
+                            RepresentativeUnit, Student, User)
 from django import forms
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
+from service.models import Route, RouteDetail, Station, Vehicle
 
 
 class CustomUserCreationForm(forms.ModelForm):
@@ -111,3 +112,64 @@ class PerInforForm(forms.ModelForm):
             user.save()
 
         return user
+
+
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ('gender', 'full_name', 'classroom', 'date_of_birth', 'image')
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+
+        return user
+
+
+class VehicleForm(forms.ModelForm):
+    class Meta:
+        model = Vehicle
+        fields = ('code', 'vehicle_type', 'price')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+
+        return user
+
+
+class StationForm(forms.ModelForm):
+    class Meta:
+        model = Station
+        fields = ('latitude', 'longitude', 'name')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+
+        return user
+
+
+class RouteForm(forms.ModelForm):
+    class Meta:
+        model = Route
+        fields = ('name', 'pickup', 'dropoff')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+
+        return user
+
+
+class RouteDetailForm(forms.ModelForm):
+    class Meta:
+        model = RouteDetail
+        fields = ['station', 'sequence']

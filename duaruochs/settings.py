@@ -30,7 +30,7 @@ SECRET_KEY = "django-insecure-9mr!msc%nfg#fj3qac+x((kv&ea735cx6gg_=!6x9e+=_u8^w0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -47,6 +47,7 @@ _THIRD_PARTY_APPS = [
     'django_select2',
     'rest_framework',
     'django_filters',
+    'corsheaders',
 ]
 
 _PROJECT_APPS = [
@@ -63,6 +64,7 @@ INSTALLED_APPS = _DJANGO_FRAMEWORK_APPS + _THIRD_PARTY_APPS + _PROJECT_APPS
 
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -102,7 +104,7 @@ DATABASES = {
         'NAME': 'duaruoc',
         'USER': 'root',
         'PASSWORD': 'Dai12321!',
-        'HOST': '192.168.101.129',  # Địa chỉ của MySQL server, 'localhost' cho cài đặt cục bộ
+        'HOST': '192.168.101.55',  # Địa chỉ của MySQL server, 'localhost' cho cài đặt cục bộ
         'PORT': '3306',       # Cổng mặc định của MySQL
     }
 }

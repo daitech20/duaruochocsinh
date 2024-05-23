@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 from account.models import Driver, Employee, Status, Student
-from address.models import Ward
+from django.core.exceptions import ValidationError
 from django.db import models
 from notification.models import Notification
+from service.enums import VehicleTypeEnum
 
 from core.utils.django_base_models import BaseModel
 
 
 class Vehicle(BaseModel):
     code = models.CharField(max_length=55)
-    vehicle_type = models.CharField(max_length=55)
-    seats = models.IntegerField(default=16)
+    vehicle_type = models.CharField(max_length=55, choices=VehicleTypeEnum.choices, default=VehicleTypeEnum.SEAT_16)
     price = models.FloatField(default=0.0)
 
     def __str__(self) -> str:
@@ -21,14 +21,23 @@ class Station(BaseModel):
     latitude = models.CharField(max_length=255)
     longitude = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
-    address = models.ForeignKey(Ward, on_delete=models.CASCADE)
-    address2 = models.CharField(max_length=50, null=True)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Route(BaseModel):
     name = models.CharField(max_length=255)
     pickup = models.ForeignKey(Station, on_delete=models.CASCADE, related_name="pickup_station")
     dropoff = models.ForeignKey(Station, on_delete=models.CASCADE, related_name="dropoff_station")
+
+    def clean(self):
+        if self.pickup == self.dropoff:
+            raise ValidationError("Pickup and dropoff stations must be different.")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
 
 class RouteDetail(BaseModel):

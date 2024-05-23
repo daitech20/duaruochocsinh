@@ -5,10 +5,12 @@ from account.models import CitizenIdentification, RepresentativeUnit
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
+from service.models import Route, Station, Vehicle
 
 from .forms import (CitizenIdentificationForm, CustomerFormSet,
-                    CustomUserCreationForm, RepresentativeUnitForm, UserForm)
+                    CustomUserCreationForm, RepresentativeUnitForm, RouteForm,
+                    StationForm, StudentForm, UserForm, VehicleForm)
 from .models import *  # noqa
 
 # Create your views here.
@@ -241,8 +243,30 @@ def perInfor(request):
     })
 
 
+@login_required
 def yourChild(request):
-    return render(request, 'frontend/yourChild.html')
+    user = request.user
+    students = user.customers.students_customer.all()
+
+    if request.method == 'POST':
+        form = StudentForm(request.POST, request.FILES)
+        if form.is_valid():
+            student = form.save(commit=False)
+            student.customer = user.customers
+            student.save()
+            return redirect('/yourChild')
+    else:
+        form = StudentForm()
+
+    form_errors = form.errors if form.errors else None
+
+    context = {
+        "students": students,
+        "form": form,
+        "form_errors": form_errors,
+    }
+
+    return render(request, 'frontend/yourChild.html', context)
 
 
 def saveAddress(request):
@@ -271,3 +295,86 @@ def changePW(request):
 
 def language(request):
     return render(request, 'frontend/language.html')
+
+
+@login_required
+def vehicle(request):
+    vehicles = Vehicle.objects.all()
+    if request.method == 'POST':
+        form = VehicleForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('/vehicle')
+    else:
+        form = VehicleForm()
+
+    form_errors = form.errors if form.errors else None
+
+    context = {
+        "vehicles": vehicles,
+        "form": form,
+        "form_errors": form_errors,
+    }
+
+    return render(request, 'frontend/vehicle.html', context)
+
+
+@login_required
+def station(request):
+    stations = Station.objects.all()
+    if request.method == 'POST':
+        form = StationForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('/station')
+    else:
+        form = StationForm()
+
+    form_errors = form.errors if form.errors else None
+
+    context = {
+        "stations": stations,
+        "form": form,
+        "form_errors": form_errors,
+    }
+
+    return render(request, 'frontend/station.html', context)
+
+
+@login_required
+def route(request):
+    routes = Route.objects.all()
+    stations = Station.objects.all()
+    if request.method == 'POST':
+        form = RouteForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('/route')
+    else:
+        form = RouteForm()
+
+    form_errors = form.errors if form.errors else None
+
+    context = {
+        "routes": routes,
+        "form": form,
+        "form_errors": form_errors,
+        "stations": stations,
+    }
+
+    return render(request, 'frontend/route.html', context)
+
+
+def route_detail_view(request, route_id):
+    route = get_object_or_404(Route, id=route_id)
+    route_details = route.route_detail.all().order_by('sequence')
+    stations = Station.objects.all()
+    return render(
+        request,
+        'frontend/route_detail.html',
+        {
+            'route': route,
+            'stations': stations,
+            'route_details': route_details
+        }
+    )
