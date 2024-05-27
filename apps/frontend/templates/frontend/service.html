@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block cart %}
+<style>
+	.active {
+		background-color:#387eff ;
+		color: white;
+	}
+</style>
 <section>
   <div class="row">
     <div class="col-3">
@@ -183,20 +189,26 @@
     html_select_list_router.innerHTML = ``;
     html_list_detail_router.innerHTML = ``;
     const list_router_dislay= list_router.filter(item => item.pickup == pickup&&item.dropoff == dropoff);
+
     list_router_dislay.forEach(function (item) {
         const div = document.createElement('div');
         div.innerHTML = `
-          <div style="padding: 5px; border-bottom: 1px solid;">
+          <div style="padding: 5px; border-bottom: 1px solid; cursor: pointer; margin-bottom: 10px;">
             <span>${item.name}</span>
           </div>
          `;
          div.addEventListener('click', function () {
+          const allDivs = html_select_list_router.querySelectorAll('div');
+          allDivs.forEach(function(div) {
+              div.classList.remove('active');
+          });
+        div.classList.add('active');
             display_stop_station(item.id);
             document.getElementById('route_id').value = item.id;
             calculateDistances();
          });
          html_select_list_router.appendChild(div);
-        })
+    })
   }
 
   async function display_ending_point(id){

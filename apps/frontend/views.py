@@ -79,6 +79,7 @@ def tripDetail(request):
 
 @login_required
 def tripHistory(request, schedule_id):
+    user = request.user
     schedule = Schedule.objects.get(id=schedule_id)
     trips_detail = TripDetail.objects.filter(schedule=schedule).order_by("-start_time")
 
@@ -95,8 +96,14 @@ def tripHistory(request, schedule_id):
         "form": form,
         "form_errors": form_errors,
         "schedule": schedule,
-        "trips_detail": trips_detail
+        "trips_detail": trips_detail,
+        "user_id": user.id
     }
+    if user.employees:
+        context.update({
+            "employee_id": user.employees.id
+        })
+
     return render(request, 'frontend/tripHistory.html', context)
 
 
@@ -569,3 +576,13 @@ def schedule_manage(request, schedule_id):
     }
 
     return render(request, 'frontend/schedule_manage.html', context)
+
+
+def thongke(request):
+    context = {}
+    return render(request, 'frontend/thongke.html', context)
+
+
+def user_manage(request):
+    context = {}
+    return render(request, 'frontend/user_manage.html', context)

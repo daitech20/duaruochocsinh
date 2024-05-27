@@ -62,6 +62,15 @@
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'frontend:aboutUs'%}">Giới thiệu</a>
                   </li>
+
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'frontend:thongke'%}">Thống kê</a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'frontend:user_manage'%}">Quản lý nhân sự</a>
+                  </li>
+
                 </ul>
 
                 <form class="d-flex" role="search" method = POST action = "{% url 'frontend:search' %}">

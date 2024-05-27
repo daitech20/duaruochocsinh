@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block cart %}
+<style>
+	.active {
+		background-color:#387eff ;
+		color: white;
+	}
+</style>
 <section>
-  <div class="row">
-    <div class="col-4">
-      <div class="card">
-
+  <div class="row" style="margin: 10px;">
+    <div class="col-3">
+      <div class="card" style="margin-bottom: 10px;">
         <div class="card-body">
-			<button type="button" class="btn btn-success btn-sm me-1 mb-2" data-toggle="modal" data-target="#addTripDetailModal">
+			<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addTripDetailModal">
 				<i class="fas fa-plus"></i> Tạo chuyến đi
 			</button>
         </div>
@@ -17,25 +22,27 @@
           <h5 class="card-title">Danh sách chuyến đi</h5>
           <ul class="list-group list-group-flush">
 			{% for trip_detail in trips_detail %}
-            	<li class="list-group-item trip-item" data-trip-id="{{ trip_detail.id }}">Chuyến đi ngày {{ trip_detail.start_time }}</li>
+            	<li style="margin-top: 10px; border-radius: 5px;cursor: pointer;" 
+					class="list-group-item trip-item" 
+					data-trip-id="{{ trip_detail.id }}">{{ trip_detail.start_time }}</li>
 			{% endfor %}
           </ul>
         </div>
       </div>
     </div>
-    <div class="col-8">
-        <div class="card">
+    <div class="col-9">
+        <div class="card" style="margin-bottom: 10px;">
             <div class="card-body">
               <h5 class="card-title">Thông tin chuyến đi</h5>
               <ul class="list-group list-group-flush">
-                <li class="list-group-item">Thông tin xe: <span id="vehicle-info"></span></li>
-                <li class="list-group-item">Tên tài xế: <span id="driver-name"></span></li>
-                <li class="list-group-item">Tên nhân viên: <span id="employee-name"></span></li>
-                <li class="list-group-item">Thời gian bắt đầu đi: <span id="start-time"></span></li>
+                <li class="list-group-item">Thông tin xe : <span id="vehicle-info"></span></li>
+                <li class="list-group-item">Tên tài xế : <span id="driver-name"></span></li>
+                <li class="list-group-item">Tên nhân viên : <span id="employee-name"></span></li>
+                <li class="list-group-item">Thời gian bắt đầu đi : <span id="start-time"></span></li>
               </ul>
             </div>
         </div>
-        <div class="card">
+        <div class="card" style="margin-bottom: 10px;">
           <div class="card-body">
             <h5 class="card-title">
               Trạng thái hiện tại
@@ -49,6 +56,7 @@
                   <th scope="col">Tên phụ huynh</th>
                   <th scope="col">Số điện thoại</th>
                   <th scope="col">Trạng thái</th>
+				  <th scope="col">Hành động</th>
                 </tr>
               </thead>
               <tbody id="student-status-list">
@@ -97,7 +105,7 @@
 					<input type="hidden" id="id_schedule" name="schedule" value={{ schedule.id }}>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
 					<button type="submit" class="btn btn-primary">Tạo chuyến</button>
 				</div>
 			</form>
@@ -130,55 +138,77 @@
 		return cookieValue;
 	  }
 	const csrftoken = getCookie('csrftoken');
+	const employee_id = {{employee_id}};
+	let tripIdRaw;
 
 	function fetchAttendance(studentId, tripDetailId) {
-        const url = `/service/api/v1/list-attendance?student_id=${studentId}&trip_detail_id=${tripDetailId}`;
-
-        fetch(url)
+        const url = `/service/api/v1/create-attendance`;
+        fetch(url,{  method: "POST",headers: {"X-CSRFToken": csrftoken,"Content-Type": "application/json"},
+		body: JSON.stringify({
+			student:studentId,
+			trip_detail:tripDetailId,
+			employee:employee_id,
+		})})
             .then(response => response.json())
             .then(data => {
-                return data.data;
+				if(data&&data.success&&data.success==1){
+					fetchDataTripDetail(tripIdRaw);
+				}
             })
             .catch(error => {
                 console.error('Error fetching attendance:', error);
             });
     }
-
-	document.addEventListener('DOMContentLoaded', function () {
-		const tripItems = document.querySelectorAll('.trip-item');
-
-		tripItems.forEach(item => {
-			item.addEventListener('click', function () {
-				const tripId = this.getAttribute('data-trip-id');
+	function checkAttendance(listAttendance,studentId,tripId){
+		const isCheck = listAttendance.some(item => item.student === studentId);
+		const haveAttendance=`
+			<td>
+				<span>Đã điểm danh<span>
+			</td>
+			<td>
+			</td>
+		`;
+		const notAttendance=`
+			<td>
+				<span>Chưa điểm danh<span>
+			</td>
+			<td>
+				<button style="border-radius: 5px; background-color: #387eff;color: white;" onclick="markAttendance(${studentId},${tripId})">
+					Điểm danh
+				</button>
+			</td>
+		`;
+		if (isCheck) {
+			return haveAttendance
+		} else {
+			return notAttendance
+		}
+	}
+	function markAttendance(studentId,tripId) {
+		fetchAttendance(studentId,tripId);
+	}
+	function fetchDataTripDetail(tripId){
+			tripIdRaw=tripId;
 				fetch(`/service/api/v1/get-trip-detail/${tripId}`)
 					.then(response => response.json())
 					.then(data => {
 						data = data.data
-						console.log(data)
-						// Cập nhật thông tin ở cột bên phải
 						document.getElementById('vehicle-info').innerText = data.schedule.vehicle.code;
 						document.getElementById('driver-name').innerText = data.schedule.driver.full_name;
 						document.getElementById('employee-name').innerText = data.schedule.employee.full_name;
 						document.getElementById('start-time').innerText = data.start_time;
-
-						// Cập nhật danh sách học sinh
+						
 						const studentList = document.getElementById('student-status-list');
-						studentList.innerHTML = ''; // Clear current list
+						studentList.innerHTML = ''; 
 						data.schedule.schedule_student_trip.forEach((student, index) => {
-							attendance = fetchAttendance(student.student.id, tripId);
-							console.log(attendance)
-
 							const row = `
 								<tr>
 									<th scope="row">${index + 1}</th>
 									<td>${student.student.full_name}</td>
 									<td>${student.student.customer.full_name}</td>
 									<td>${student.student.customer.user.phone}</td>
-									<td>
-										<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
-											${student.student.status}
-										</button>
-									</td>
+									${checkAttendance(data?.trip_detail_attendance,student.student.id,data.id)}
+									
 								</tr>
 							`;
 							studentList.insertAdjacentHTML('beforeend', row);
@@ -187,7 +217,15 @@
 					.catch(error => {
 						console.error('Error fetching trip details:', error);
 					});
-			});
+	}
+	document.addEventListener('DOMContentLoaded', function () {
+		const tripItems = document.querySelectorAll('.trip-item');
+		tripItems.forEach(item => {
+			item.addEventListener('click', function() {
+				tripItems.forEach(item => item.classList.remove('active'));
+            	this.classList.add('active');
+            	fetchDataTripDetail(this.getAttribute('data-trip-id'));
+        	});
 		});
 	});
 </script>

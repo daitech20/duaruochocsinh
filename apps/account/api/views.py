@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from account.api.serializers import StudentSerializer
-from account.models import Student
+from account.api.serializers import (DriverCreateSerializer, DriverSerializer,
+                                     EmployeeCreateSerializer,
+                                     EmployeeSerializer, StudentSerializer)
+from account.models import Driver, Employee, Student
 from django.http.response import Http404
 from rest_framework import generics
 
@@ -50,3 +52,33 @@ class StudentDetail(generics.RetrieveUpdateDestroyAPIView):
             return success_api_resp(data=[])
         except Http404 as e:
             raise ErrorResponseException(error=str(e))
+
+
+class EmployeeCreateView(generics.CreateAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeCreateSerializer
+
+
+class EmployeeList(generics.ListAPIView):
+    queryset = Employee.objects.all().select_related('user')
+    serializer_class = EmployeeSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return success_api_resp(data=serializer.data)
+
+
+class DriverCreateView(generics.CreateAPIView):
+    queryset = Driver.objects.all()
+    serializer_class = DriverCreateSerializer
+
+
+class DriverList(generics.ListAPIView):
+    queryset = Driver.objects.all().select_related('user')
+    serializer_class = DriverSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return success_api_resp(data=serializer.data)

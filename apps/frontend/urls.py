@@ -38,4 +38,6 @@ urlpatterns = [
     path('payment-cancel', views.PaymentCancelView.as_view(), name="payment_cancel"),
     path('payment-success', views.payment_success, name='payment_success'),
     path('schedule-manage/<int:schedule_id>', views.schedule_manage, name='schedule_manage'),
+    path('thongke', views.thongke, name='thongke'),
+    path('user-manage', views.user_manage, name='user_manage'),
 ]

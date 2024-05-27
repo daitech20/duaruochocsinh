@@ -163,8 +163,8 @@ class Employee(BaseModel):
                                             related_name="employee_representative_unit", null=True)
 
     representative_unit_check = models.BooleanField(default=False)
-    citizen_identification = models.ForeignKey(CitizenIdentification, on_delete=models.CASCADE,
-                                               related_name="employee_citizen_identification")
+    citizen_identification = models.ForeignKey(CitizenIdentification, on_delete=models.SET_NULL,
+                                               related_name="employee_citizen_identification", null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     salary = models.FloatField(default=0.0)
 
@@ -190,8 +190,8 @@ class Driver(BaseModel):
                                             related_name="driver_representative_unit", null=True)
 
     representative_unit_check = models.BooleanField(default=False)
-    citizen_identification = models.ForeignKey(CitizenIdentification, on_delete=models.CASCADE,
-                                               related_name="driver_citizen_identification")
+    citizen_identification = models.ForeignKey(CitizenIdentification, on_delete=models.SET_NULL,
+                                               related_name="driver_citizen_identification", null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     salary = models.FloatField(default=0.0)
 
