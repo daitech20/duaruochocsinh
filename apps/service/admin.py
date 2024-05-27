@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 from service.models import (Route, RouteDetail, Schedule, StudentTrip,
-                            TripDetail)
+                            TripDetail, Attendance)
 
 
 @admin.register(Route)
@@ -26,3 +26,4 @@ class RouteDetailAdmin(admin.ModelAdmin):
 admin.site.register(Schedule)
 admin.site.register(StudentTrip)
 admin.site.register(TripDetail)
+admin.site.register(Attendance)

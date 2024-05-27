@@ -119,20 +119,6 @@ class ScheduleDetailSerializer(serializers.ModelSerializer):
         )
 
 
-class TripDetailSerializer(serializers.ModelSerializer):
-    schedule = ScheduleDetailSerializer()
-
-    class Meta:
-        model = TripDetail
-        fields = (
-            'id',
-            'start_time',
-            'end_time',
-            'schedule',
-            'status',
-        )
-
-
 class AttendanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendance
@@ -142,4 +128,20 @@ class AttendanceSerializer(serializers.ModelSerializer):
             'student',
             'note',
             'employee'
+        )
+
+
+class TripDetailSerializer(serializers.ModelSerializer):
+    schedule = ScheduleDetailSerializer()
+    trip_detail_attendance = AttendanceSerializer(many=True)
+
+    class Meta:
+        model = TripDetail
+        fields = (
+            'id',
+            'start_time',
+            'end_time',
+            'schedule',
+            'status',
+            'trip_detail_attendance',
         )

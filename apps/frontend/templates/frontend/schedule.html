@@ -2,12 +2,15 @@
 {% load static %}
 {% block ongoing %}
 <div class="container">
-    <div class="card">
+    <div style="margin: 10px;" class="card">
         <div class="card-body">
-            <ul class="list-group list-group-flush">
-              {% for schedule in paid_schedules %}
+          {% for schedule in paid_schedules %}
+            <ul style="border-bottom: 1px solid;">
+                <div style="text-align: center;">
+                  <span style="font-size: 20px; font-weight: 500;">{{schedule.route.name}}</span>
+                </div>
                 <li class="list-group-item">
-                    Thời gian: từ ngày {{ schedule.start_day }} tới ngày {{ schedule.end_day }}
+                    Thời gian: {{ schedule.start_day }} tới {{ schedule.end_day }}
                     <br>
                     Thời gian đón: {{ schedule.pickup_time }}
                     <div class="row align-items-center">
@@ -32,8 +35,8 @@
                     </div>
                     {% endif %}
                 </li>
-              {% endfor %}
             </ul>
+            {% endfor %}
         </div>
     </div>
   </div>
