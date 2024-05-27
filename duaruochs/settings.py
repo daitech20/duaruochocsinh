@@ -104,8 +104,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'duaruoc',
         'USER': 'root',
-        'PASSWORD': '12345',
-        'HOST': 'localhost',
+        'PASSWORD': 'Dai12321!',
+        'HOST': '192.168.101.129',
         'PORT': '3306',
     }
 }
@@ -159,3 +159,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 PAYPAL_CLIENT_ID = 'Afqc-QDyPrhO48ek-5snQxT698jQUNpxyMRB9d3O8n_BtHoAfGeE4DbY1S10xhuj9uQhPe99Wu8GwIed'
 PAYPAL_SECRET = 'EEdms_KUC5saeNAbWL9Rjguvc9R99ERMBlOaBasnzBJXxheeLJRoyMAlDlZSxtbwiw0djjTeT_o0UVTp'
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "doandaihiep23@gmail.com"
+EMAIL_HOST_PASSWORD = "iohg pink zjit stcn"
