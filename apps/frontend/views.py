@@ -576,3 +576,13 @@ def schedule_manage(request, schedule_id):
     }
 
     return render(request, 'frontend/schedule_manage.html', context)
+
+
+def thongke(request):
+    context = {}
+    return render(request, 'frontend/thongke.html', context)
+
+
+def user_manage(request):
+    context = {}
+    return render(request, 'frontend/user_manage.html', context)
