@@ -3,7 +3,7 @@
 {% block personalInformation %}
 <div class="card mb-4">
     <div class="card-header py-3">
-      <h5 class="mb-0">Your Child</h5>
+      <h5 class="mb-0">Học sinh</h5>
     </div>
     <div class="card-body">
       {% for student in students %}
@@ -43,7 +43,7 @@
               <button type="button" class="btn btn-primary btn-sm" onclick="openEditModal({{ student.id }})" data-mdb-tooltip-init title="Edit item">
                   <i class="fas fa-edit"></i>
               </button>
-              <button type="button" class="btn btn-danger btn-sm me-1 mb-2" data-mdb-tooltip-init title="Remove item" onclick="openConfirmDeleteModal()" title="Remove item">
+              <button type="button" class="btn btn-danger btn-sm me-1 mb-2" data-mdb-tooltip-init title="Remove item" onclick="openConfirmDeleteModal({{ student.id }})" title="Remove item">
                   <i class="fas fa-trash"></i>
               </button>
           </div>
@@ -55,7 +55,7 @@
 
       <a style="display: flex; justify-content: center; align-items: center;">
         <button type="button" class="btn btn-success btn-sm me-1 mb-2" data-toggle="modal" data-target="#addStudentModal">
-            <i class="fas fa-plus"></i> Add Student
+            <i class="fas fa-plus"></i> Thêm học sinh
         </button>
       </a>
 
@@ -64,32 +64,36 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addStudentModalLabel">Add Student</h5>
+                    <h5 class="modal-title" id="addStudentModalLabel">Thêm học sinh</h5>
                 </div>
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %} <!-- CSRF token -->
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="id_full_name">Full Name:</label>
+                            <label for="id_full_name">Họ tên:</label>
                             {{ form.full_name }}
                         </div>
+                        <br>
                         <div class="form-group">
-                            <label for="id_gender">Gender:</label>
+                            <label for="id_gender">Giới tính:</label>
                             <select id="id_gender" name="gender" class="form-control" required>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                             </select>
                         </div>
+                        <br>
                         <div class="form-group">
-                            <label for="id_classroom">Classroom:</label>
+                            <label for="id_classroom">Lớp học:</label>
                             {{ form.classroom }}
                         </div>
+                        <br>
                         <div class="form-group">
-                            <label for="id_date_of_birth">Date of Birth:</label>
+                            <label for="id_date_of_birth">Ngày sinh:</label>
                             {{ form.date_of_birth }}
                         </div>
+                        <br>
                         <div class="form-group">
-                            <label for="id_image">Image:</label>
+                            <label for="id_image">Hình ảnh:</label>
                             {{ form.image }}
                         </div>
                     </div>
@@ -97,7 +101,7 @@
                         <!-- Nút Close để đóng modal -->
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <!-- Nút Submit để gửi form -->
-                        <button type="submit" class="btn btn-primary">Add Student</button>
+                        <button type="submit" class="btn btn-primary">Thêm học sinh</button>
                     </div>
                 </form>
             </div>
@@ -132,7 +136,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" onclick="saveEditedStudent()">Save changes</button>
+              <button type="button" class="btn btn-primary" onclick="saveEditedStudent()">Lưu</button>
             </div>
           </div>
         </div>
@@ -156,9 +160,27 @@
           </div>
         </div>
       </div>
+      <input type="hidden" id="remove_student_id" name="id" value="">
 
 
 <script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }
+  const csrftoken = getCookie('csrftoken');
+
   function openEditModal(studentId) {
     $("#edit_student_id").val(studentId);
     $.ajax({
@@ -189,6 +211,9 @@
       type: "PATCH",
       url: "/account/api/v1/update-student/" + studentId,
       data: editedData,
+      headers: {
+        "X-CSRFToken": csrftoken
+      },
       success: function(response) {
         if (response.success) {
           alert("Student updated successfully!");
@@ -204,16 +229,20 @@
     });
   }
 
-  function openConfirmDeleteModal() {
+  function openConfirmDeleteModal(student_id) {
+    document.getElementById("remove_student_id").value = student_id
     $('#confirmDeleteModal').modal('show');
   }
 
   $('#confirmDeleteBtn').on('click', function() {
-    var studentId = $("#student_id").val();
+    var studentId = $("#remove_student_id").val();
 
     $.ajax({
         url: '/account/api/v1/update-student/' + studentId,
         type: 'DELETE',
+        headers: {
+          "X-CSRFToken": csrftoken
+        },
         success: function(response) {
             $('#confirmDeleteModal').modal('hide');
             window.location.reload();

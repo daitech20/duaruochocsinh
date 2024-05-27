@@ -37,27 +37,30 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'frontend:home'%}">Home</a>
+                    <a class="nav-link" aria-current="page" href="{% url 'frontend:home'%}">Trang chủ</a>
                   </li>
 
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'frontend:service'%}">Service</a>
-                  </li>
-
-                  <li class="nav-item">
-                    {% if user %}
-                    <a class="nav-link" href="{% url 'frontend:schedule'%}">Activity</a>
+                  {% if user.full_name %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="{% url 'frontend:service'%}">Dịch vụ</a>
+                    </li>
                     {% else %}
-                    <a class="nav-link disabled" aria-disabled="true">Activity</a>
+                      <a class="nav-link disabled" aria-disabled="true">Dịch vụ</a>
+                    {% endif %}
+                  <li class="nav-item">
+                    {% if user.full_name %}
+                    <a class="nav-link" href="{% url 'frontend:schedule'%}">Hoạt động</a>
+                    {% else %}
+                    <a class="nav-link disabled" aria-disabled="true">Hoạt động</a>
                     {% endif %}
                   </li>
 
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'frontend:policy'%}">Policy</a>
+                    <a class="nav-link" href="{% url 'frontend:policy'%}">Chính sách</a>
                   </li>
 
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'frontend:aboutUs'%}">About Us</a>
+                    <a class="nav-link" href="{% url 'frontend:aboutUs'%}">Giới thiệu</a>
                   </li>
                 </ul>
 
@@ -75,11 +78,11 @@
                   <a href="{% url 'frontend:cart' %}">
                       <i class="fas fa-shopping-cart"></i>
                   </a>
-                  <span> Hello! <a class="nav-item" href= "{% url 'frontend:perInfor'%}"> {{request.user.full_name}} </a> </span>
+                  <span> Xin chào <a class="nav-item" href= "{% url 'frontend:perInfor'%}"> {{request.user.full_name}}! </a> </span>
 
                 {% else %}
-                    <a class="nav-link badge text-bg-primary text-wrap" href= "{% url 'frontend:login'%}"> Log in </a>
-                    <a class="nav-link badge text-bg-warning text-wrap" href= "{% url 'frontend:register'%}"> Sign up </a>
+                    <a class="nav-link badge text-bg-primary text-wrap" href= "{% url 'frontend:login'%}"> Đăng nhập </a>
+                    <a class="nav-link badge text-bg-warning text-wrap" href= "{% url 'frontend:register'%}"> Đăng ký </a>
                 {% endif %}
 
                 </div>

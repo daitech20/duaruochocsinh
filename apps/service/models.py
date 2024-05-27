@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from account.models import Driver, Employee, Status, Student
+from account.models import Driver, Employee, Student
 from django.core.exceptions import ValidationError
 from django.db import models
 from notification.models import Notification
 from service.enums import VehicleTypeEnum
 
+from core.constants.enums import Status
 from core.utils.django_base_models import BaseModel
 
 
@@ -50,10 +51,10 @@ class RouteDetail(BaseModel):
 
 
 class Schedule(BaseModel):
-    distance = models.IntegerField()
-    estimated_time = models.IntegerField()
+    distance = models.FloatField()
     start_day = models.DateField()
-    end_day = models.DateField()
+    end_day = models.DateField(null=True)
+    pickup_time = models.TimeField(null=True)
     route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name="route_schedule")
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name="vehicle_schedule")
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="driver_schedule")
@@ -75,15 +76,16 @@ class TimePackage(BaseModel):
 
 class TripDetail(BaseModel):
     start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    end_time = models.DateTimeField(null=True)
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, related_name="schedule_trip_detail")
-    status = models.ForeignKey(Status, on_delete=models.CASCADE, related_name="status_trip_detail")
+    status = models.CharField(max_length=50, choices=Status.choices)
 
 
 class StudentTrip(BaseModel):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, related_name="schedule_student_trip")
-    status = models.ForeignKey(Status, on_delete=models.CASCADE, related_name="status_student_trip")
-    notification = models.ForeignKey(Notification, on_delete=models.CASCADE, related_name="notification_student_trip")
+    status = models.CharField(max_length=50, choices=Status.choices, null=True)
+    notification = models.ForeignKey(Notification, on_delete=models.CASCADE,
+                                     related_name="notification_student_trip", null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="student_student_trip")
 
     class Meta:
@@ -92,7 +94,7 @@ class StudentTrip(BaseModel):
 
 class StudentStatus(BaseModel):
     trip_detail = models.ForeignKey(TripDetail, on_delete=models.CASCADE, related_name="trip_detail_student_status")
-    status = models.ForeignKey(Status, on_delete=models.CASCADE, related_name="status_student_status")
+    status = models.CharField(max_length=50, choices=Status.choices)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="student_student_status")
     time = models.DateTimeField(auto_now_add=True)
 
@@ -103,3 +105,6 @@ class Attendance(BaseModel):
     time = models.DateTimeField(auto_now_add=True)
     note = models.CharField(max_length=255, null=True, blank=True)
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="attendance_employee")
+
+    class Meta:
+        unique_together = ('trip_detail', 'student')

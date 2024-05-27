@@ -15,7 +15,7 @@ urlpatterns = [
     path('ongoing/', views.ongoing, name="ongoing"),
     path('schedule/', views.schedule, name="schedule"),
     path('tripDetail/', views.tripDetail, name="tripDetail"),
-    path('tripHistory/', views.tripHistory, name="tripHistory"),
+    path('tripHistory/<int:schedule_id>', views.tripHistory, name="tripHistory"),
     path('policy/', views.policy, name="policy"),
     path('aboutUs/', views.aboutUs, name="aboutUs"),
     path('personal/', views.personal, name="personal"),
@@ -35,4 +35,7 @@ urlpatterns = [
     path('station/', views.station, name="station"),
     path('route/', views.route, name="route"),
     path('route/<int:route_id>/', views.route_detail_view, name='route_detail_view'),
+    path('payment-cancel', views.PaymentCancelView.as_view(), name="payment_cancel"),
+    path('payment-success', views.payment_success, name='payment_success'),
+    path('schedule-manage/<int:schedule_id>', views.schedule_manage, name='schedule_manage'),
 ]

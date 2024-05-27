@@ -3,144 +3,91 @@
 {% block checkout %}
 <div class="container">
 	<div class="py-5 text-center">
-	  <h2>Checkout form</h2>
+	  <h2>Thanh toán</h2>
 	</div>
 
 	<div class="row">
 	  <div class="col-md-4 order-md-2 mb-4">
 		<h4 class="d-flex justify-content-between align-items-center mb-3">
-		  <span class="text-muted">Your cart</span>
+		  <span class="text-muted">Đơn hàng</span>
 		  <span class="badge badge-secondary badge-pill">3</span>
 		</h4>
 		<ul class="list-group mb-3">
 		  <li class="list-group-item d-flex justify-content-between lh-condensed">
 			<div>
 			  <h6 class="my-0">Dịch vụ đưa đón học sinh</h6>
-			  <small class="text-muted">16 chỗ, 3 tháng</small>
+			  <small class="text-muted">{{ vehicel_type }}, {{ time_package }}</small>
+			  </br>
+			  <small class="text-muted">Khoảng cách: {{ distance }}km</small>
+				</br>
+				<small class="text-muted">Giá phương tiện (1 km): <strong id="vehicle-price" ></strong></small>
 			</div>
-			<span class="text-muted">$15</span>
-		  </li>
-		  <li class="list-group-item d-flex justify-content-between lh-condensed">
-			<div>
-			  <h6 class="my-0">Dịch vụ đưa đón học sinh</h6>
-			  <small class="text-muted">29 chỗ, 3 tháng</small>
-			</div>
-			<span class="text-muted">$20</span>
-		  </li>
-		  <li class="list-group-item d-flex justify-content-between lh-condensed">
-			<div>
-			  <h6 class="my-0">Dịch vụ đưa đón học sinh</h6>
-			  <small class="text-muted">16 chỗ, 6 tháng</small>
-			</div>
-			<span class="text-muted">$29</span>
-		  </li>
-		  <li class="list-group-item d-flex justify-content-between bg-light">
-			<div class="text-success">
-			  <h6 class="my-0">Discount</h6>
-			  <small>CODE</small>
-			</div>
-			<span class="text-success">-$5</span>
 		  </li>
 		  <li class="list-group-item d-flex justify-content-between">
 			<span>Total (USD)</span>
-			<strong>$59</strong>
+			<strong id="total-price" ></strong>
 		  </li>
 		</ul>
 
 	  </div>
 	  <div class="col-md-8 order-md-1">
-		<h4 class="mb-3">Billing address</h4>
-		<form class="needs-validation" novalidate>
+		<h4 class="mb-3">Thông tin đơn hàng</h4>
+		<form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+		  {% csrf_token %}
 		  <div class="row">
-			<div class="col-md-6 mb-3">
-			  <label for="firstName">First name</label>
-			  <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
-			  <div class="invalid-feedback">
-				Valid first name is required.
-			  </div>
-			</div>
-			<div class="col-md-6 mb-3">
-			  <label for="lastName">Last name</label>
-			  <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
-			  <div class="invalid-feedback">
-				Valid last name is required.
-			  </div>
-			</div>
+			<h5>Tên chuyến: {{ route.name }}</h5>
+		  </div>
+		  <div class="mb-3">
+			<h5>Danh sách điểm dừng:</h5>
+			<label for="id_pickup">Điểm đón: {{ route.pickup.name }} </label>
+		  	</br>
+			{% for rt in route_details %}
+				<label for="id_pickup">Trạm: {{ rt.station.name }} </label>
+				</br>
+			{% endfor %}
+			<label for="id_pickup">Điểm trả: {{ route.dropoff.name }} </label>
 		  </div>
 
 		  <div class="mb-3">
-			<label for="username">Phone number</label>
-			<div class="input-group">
-			  <div class="input-group-prepend">
-				<span class="input-group-text">@</span>
-			  </div>
-			  <input type="text" class="form-control" id="username" placeholder="Username" required>
-			  <div class="invalid-feedback" style="width: 100%;">
-				Your phone number is required.
-			  </div>
-			</div>
+			<label for="distance">Quảng đường: {{ distance }} km</span></label>
+			<input type="number" name="distance" required="" id="id_distance" hidden value={{distance}}>
 		  </div>
 
 		  <div class="mb-3">
-			<label for="email">Email <span class="text-muted">(Optional)</span></label>
-			<input type="email" class="form-control" id="email" placeholder="you@example.com">
-			<div class="invalid-feedback">
-			  Please enter a valid email address for shipping updates.
-			</div>
+			<label for="start_day">Ngày bắt đầu: {{ form.start_day }}</span></label>
+		  </div>
+		  <div class="mb-3">
+			<label for="end_day">Ngày kết thúc:</label>
+    		<input type="date" id="id_end_day" name="end_day" readonly>
+		  </div>
+		  <div class="mb-3">
+			<label for="pickup_time">Thời gian đón: {{ pickup_time }}</span></label>
+			<input type="time" id="id_pickup_time" name="pickup_time" value={{pickup_time}} hidden>
+		  </div>
+		  <div class="mb-3">
+			<label for="vehicle">Phương tiện: {{ form.vehicle }}</span></label>
 		  </div>
 
-		  <h4 class="mb-3">Payment</h4>
+		  <div class="mb-3">
+			<label for="driver">Tài xế: {{ form.driver }}</span></label>
+		  </div>
 
-		  <div class="d-block my-3">
-			<div class="custom-control custom-radio">
-			  <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-			  <label class="custom-control-label" for="credit">Credit card</label>
-			</div>
-			<div class="custom-control custom-radio">
-			  <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-			  <label class="custom-control-label" for="debit">Debit card</label>
-			</div>
-			<div class="custom-control custom-radio">
-			  <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" required>
-			  <label class="custom-control-label" for="paypal">PayPal</label>
-			</div>
+		  <div class="mb-3">
+			<label for="employee">Nhân viên: {{ form.employee }}</span></label>
 		  </div>
-		  <div class="row">
-			<div class="col-md-6 mb-3">
-			  <label for="cc-name">Name on card</label>
-			  <input type="text" class="form-control" id="cc-name" placeholder="" required>
-			  <small class="text-muted">Full name as displayed on card</small>
-			  <div class="invalid-feedback">
-				Name on card is required
-			  </div>
-			</div>
-			<div class="col-md-6 mb-3">
-			  <label for="cc-number">Credit card number</label>
-			  <input type="text" class="form-control" id="cc-number" placeholder="" required>
-			  <div class="invalid-feedback">
-				Credit card number is required
-			  </div>
-			</div>
-		  </div>
-		  <div class="row">
-			<div class="col-md-3 mb-3">
-			  <label for="cc-expiration">Expiration</label>
-			  <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
-			  <div class="invalid-feedback">
-				Expiration date required
-			  </div>
-			</div>
-			<div class="col-md-3 mb-3">
-			  <label for="cc-cvv">CVV</label>
-			  <input type="text" class="form-control" id="cc-cvv" placeholder="" required>
-			  <div class="invalid-feedback">
-				Security code required
-			  </div>
-			</div>
-		  </div>
-		  <hr class="mb-4">
-		  <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+		  <input type="hidden" id="id_route" name="route" value="{{ route.id }}">
+		  <input type="hidden" name="total_amount" id="total_amount" value=0>
+		  <button class="btn btn-primary btn-lg btn-block" type="submit">Thanh toán</button>
+
 		</form>
+		{% if form_errors %}
+			<div class="alert alert-danger" role="alert">
+				{% for field, errors in form_errors.items %}
+					<strong>{{ field|title }}</strong>: {{ errors|join:", " }}
+				{% endfor %}
+			</div>
+		{% endif %}
+
 	  </div>
 	</div>
 
@@ -153,4 +100,58 @@
 	  </ul>
 	</footer>
   </div>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		var startDateInput = document.getElementById("id_start_day");
+		var endDateInput = document.getElementById("id_end_day");
+		var vehicleInput = document.getElementById("id_vehicle");
+
+		startDateInput.addEventListener("change", function() {
+			var startDate = new Date(startDateInput.value);
+			if ("{{time_package}}" == "3 tháng") {
+				startDate.setMonth(startDate.getMonth() + 3);
+			}
+			if ("{{time_package}}" == "6 tháng") {
+				startDate.setMonth(startDate.getMonth() + 6);
+			}
+			if ("{{time_package}}" == "9 tháng") {
+				startDate.setMonth(startDate.getMonth() + 9);
+			}
+
+			var endDate = startDate.toISOString().slice(0, 10);
+			endDateInput.value = endDate;
+		});
+
+		vehicleInput.addEventListener("change", function() {
+			$.ajax({
+				type: "GET",
+				url: "/service/api/v1/get-vehicle/" + vehicleInput.value,
+				success: function(response) {
+				  if (response.success) {
+					document.getElementById("vehicle-price").innerText=response.data.price + '$'
+					if ("{{time_package}}" == "3 tháng") {
+						document.getElementById("total-price").innerText= response.data.price * {{ distance }} * 3 + '$'
+						document.getElementById("total_amount").value = response.data.price * {{ distance }} * 3
+					}
+					if ("{{time_package}}" == "6 tháng") {
+						document.getElementById("total-price").innerText= response.data.price * {{ distance }} * 6 + '$'
+						document.getElementById("total_amount").value = response.data.price * {{ distance }} * 6
+					}
+					if ("{{time_package}}" == "9 tháng") {
+						document.getElementById("total-price").innerText= response.data.price * {{ distance }} * 9 + '$'
+						document.getElementById("total_amount").value = response.data.price * {{ distance }} * 9
+					}
+				  } else {
+					alert("Failed to load vehicle data!");
+				  }
+				},
+				error: function(xhr, status, error) {
+				  alert("Failed to load vehicle data: " + error);
+				}
+			  });
+		});
+
+	});
+</script>
 {% endblock checkout %}

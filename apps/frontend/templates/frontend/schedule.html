@@ -5,50 +5,34 @@
     <div class="card">
         <div class="card-body">
             <ul class="list-group list-group-flush">
+              {% for schedule in paid_schedules %}
                 <li class="list-group-item">
-                    Thời gian:...
+                    Thời gian: từ ngày {{ schedule.start_day }} tới ngày {{ schedule.end_day }}
+                    <br>
+                    Thời gian đón: {{ schedule.pickup_time }}
                     <div class="row align-items-center">
-                        <div class="col-auto d-flex justify-content-center">
-                            <img src=" {% static 'app/images/logo.png'%}" width="40" height="40">
-                        </div>
                         <div class="col-8">
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item">Điểm đón:</li>
-                                <li class="list-group-item">Điểm trả:</li>
+                                <li class="list-group-item">Điểm đón: {{ schedule.route.pickup.name }}</li>
+                                <li class="list-group-item">Điểm trả: {{ schedule.route.dropoff.name }}</li>
                             </ul>
                         </div>
-                        <div class="col-3">
-                          <a class="btn btn-primary" href="{% url 'frontend:tripHistory'%}">
-                            Lịch sử chuyến đi
-                          </a>
-                        </div>
                     </div>
-                    <div>
-                      <a href="{% url 'frontend:service'%}" class="btn btn-sm btn-success shadow-0"> Đặt lại </a>
+                    <div class="col-3">
+                      <a class="btn btn-primary" href="{% url 'frontend:tripHistory' schedule.id %}">
+                        Lịch sử chuyến đi
+                      </a>
                     </div>
+                    <br>
+                    {% if user.customers %}
+                    <div class="col-3">
+                      <a class="btn btn-primary" href="{% url 'frontend:schedule_manage' schedule.id %}">
+                        Quản lý Lịch trình
+                      </a>
+                    </div>
+                    {% endif %}
                 </li>
-                <li class="list-group-item">
-                  Thời gian:...
-                  <div class="row align-items-center">
-                      <div class="col-auto d-flex justify-content-center">
-                          <img src=" {% static 'app/images/logo.png'%}" width="40" height="40">
-                      </div>
-                      <div class="col-8">
-                          <ul class="list-group list-group-flush">
-                              <li class="list-group-item">Điểm đón:</li>
-                              <li class="list-group-item">Điểm trả:</li>
-                          </ul>
-                      </div>
-                      <div class="col-3">
-                        <a class="btn btn-primary" href="{% url 'frontend:tripHistory'%}">
-                          Lịch sử chuyến đi
-                        </a>
-                      </div>
-                  </div>
-                  <div>
-                    <a href="{% url 'frontend:service'%}" class="btn btn-sm btn-success shadow-0"> Đặt lại </a>
-                  </div>
-              </li>
+              {% endfor %}
             </ul>
         </div>
     </div>
