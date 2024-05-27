@@ -5,25 +5,22 @@
     <div class="row">
 		<div class="col-3">
             <ul class="list-group list-group-flush">
-                <li><a class="list-group-item" href="{% url 'frontend:perInfor'%}">Personal Information</a></li>
+                <li><a class="list-group-item" href="{% url 'frontend:perInfor'%}">Thông tin cá nhân</a></li>
                 {% if user.customers %}
-                <li><a class="list-group-item" href="{% url 'frontend:yourChild'%}">Your children information</a></li>
+                <li><a class="list-group-item" href="{% url 'frontend:yourChild'%}">Danh sách học sinh</a></li>
                 {% endif %}
-                <li><a class="list-group-item" href="{% url 'frontend:payment'%}">Payment</a></li>
-                <li><a class="list-group-item" href="{% url 'frontend:termPolicy'%}">Term & Policy</a></li>
-                <li><a class="list-group-item" href="{% url 'frontend:support'%}">Support</a></li>
-                <li><a class="list-group-item" href="{% url 'frontend:changePW'%}">Change password</a></li>
-                <li><a class="list-group-item" href="{% url 'frontend:language'%}">Language</a></li>
-                {% if user.is_staff %}
-                <li><a class="list-group-item" href="{% url 'frontend:vehicle'%}">Vehicle</a></li>
+                {% if user.is_staff%}
+                    {% if user.is_staff %}
+                    <li><a class="list-group-item" href="{% url 'frontend:vehicle'%}">Phương tiện</a></li>
+                    {% endif %}
+                    {% if user.is_staff %}
+                    <li><a class="list-group-item" href="{% url 'frontend:station'%}">Trạm dừng</a></li>
+                    {% endif %}
+                    {% if user.is_staff %}
+                    <li><a class="list-group-item" href="{% url 'frontend:route'%}">Tuyến đường</a></li>
+                    {% endif %}
                 {% endif %}
-                {% if user.is_staff %}
-                <li><a class="list-group-item" href="{% url 'frontend:station'%}">Station</a></li>
-                {% endif %}
-                {% if user.is_staff %}
-                <li><a class="list-group-item" href="{% url 'frontend:route'%}">Route</a></li>
-                {% endif %}
-                <li><a class="list-group-item" href="{% url 'frontend:logout'%}">Log out</a></li>
+                <li><a class="list-group-item" href="{% url 'frontend:logout'%}">Đăng xuất</a></li>
             </ul>
         </div>
 

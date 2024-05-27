@@ -18,3 +18,5 @@ class MediaType(models.TextChoices):
 class Status(models.TextChoices):
     ACTIVE = "active"
     INACTIVE = "inactive"
+    PENDING = "pending"
+    SUCCESS = "success"

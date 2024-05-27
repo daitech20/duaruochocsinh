@@ -1,16 +1,23 @@
 # -*- coding: utf-8 -*-
-import json  # noqa
-
+import paypalrestsdk
 from account.models import CitizenIdentification, RepresentativeUnit
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-from service.models import Route, Station, Vehicle
+from django.urls import reverse  # noqa
+from django.views.generic import TemplateView
+from order.models import Order, OrderDetail, OrderStatus
+from service.models import (Route, RouteDetail, Schedule, Station, StudentTrip,
+                            TripDetail, Vehicle)
+
+from core.constants.enums import Status
 
 from .forms import (CitizenIdentificationForm, CustomerFormSet,
                     CustomUserCreationForm, RepresentativeUnitForm, RouteForm,
-                    StationForm, StudentForm, UserForm, VehicleForm)
+                    ScheduleForm, StationForm, StudentForm, StudentTripForm,
+                    TripDetailForm, UserForm, VehicleForm)
 from .models import *  # noqa
 
 # Create your views here.
@@ -21,6 +28,7 @@ def home(request):
     return render(request, 'frontend/home.html', context)
 
 
+@login_required
 def service(request):
     context = {}
     return render(request, 'frontend/service.html', context)
@@ -36,8 +44,31 @@ def ongoing(request):
     return render(request, 'frontend/ongoing.html', context)
 
 
+@login_required
 def schedule(request):
-    context = {}
+    if hasattr(request.user, 'customers'):
+        customer = request.user.customers
+        paid_orders = Order.objects.filter(
+            customer=customer,
+            order_details__status='success'
+        ).distinct()
+    else:
+        paid_orders = Order.objects.filter(
+            order_details__status='success'
+        ).distinct()
+
+    order_details = OrderDetail.objects.filter(
+        order__in=paid_orders,
+        status='success'
+    )
+
+    paid_schedules = Schedule.objects.filter(
+        order_detail_schedule__in=order_details
+    ).distinct()
+
+    context = {
+        "paid_schedules": paid_schedules
+    }
     return render(request, 'frontend/schedule.html', context)
 
 
@@ -46,8 +77,26 @@ def tripDetail(request):
     return render(request, 'frontend/tripDetail.html', context)
 
 
-def tripHistory(request):
-    context = {}
+@login_required
+def tripHistory(request, schedule_id):
+    schedule = Schedule.objects.get(id=schedule_id)
+    trips_detail = TripDetail.objects.filter(schedule=schedule).order_by("-start_time")
+
+    if request.method == 'POST':
+        form = TripDetailForm(request.POST, request.FILES, initial={'schedule': schedule_id})
+        if form.is_valid():
+            form.save()
+            return redirect('frontend:tripHistory', schedule_id=schedule_id)
+    else:
+        form = TripDetailForm(initial={'schedule': schedule_id})
+
+    form_errors = form.errors if form.errors else None
+    context = {
+        "form": form,
+        "form_errors": form_errors,
+        "schedule": schedule,
+        "trips_detail": trips_detail
+    }
     return render(request, 'frontend/tripHistory.html', context)
 
 
@@ -66,9 +115,122 @@ def cart(request):
     return render(request, 'frontend/cart.html', context)
 
 
+paypalrestsdk.configure({
+    "mode": "sandbox",  # Change to "live" for production
+    "client_id": settings.PAYPAL_CLIENT_ID,
+    "client_secret": settings.PAYPAL_SECRET,
+})
+
+
+@login_required
 def checkout(request):
-    context = {}
+    user = request.user
+    route_id = request.GET.get('route_id')
+    route = Route.objects.get(id=route_id)
+    route_details = RouteDetail.objects.filter(route_id=route_id).order_by('sequence')
+    time_package = request.GET.get('time_package')
+    vehicel_type = request.GET.get('vehicel_type')
+    pickup_time = request.GET.get('pickup_time')
+    distance = request.GET.get('distance')
+
+    if request.method == "POST":
+        form = ScheduleForm(request.POST, vehicle_type=vehicel_type, initial={'route': route_id})
+        if form.is_valid():
+            schedule = form.save()
+            total_amount = request.POST.get('total_amount')
+            order = Order.objects.create(
+                total_price=total_amount,
+                customer=user.customers
+            )
+            OrderDetail.objects.create(
+                order=order,
+                status=Status.PENDING,
+                schedule=schedule,
+                time_package=time_package,
+                price=total_amount
+            )
+            OrderStatus.objects.create(
+                order=order,
+                status=Status.PENDING
+            )
+
+            payment = paypalrestsdk.Payment({
+                "intent": "sale",
+                "payer": {
+                    "payment_method": "paypal",
+                },
+                "redirect_urls": {
+                    "return_url": request.build_absolute_uri(reverse("frontend:payment_success")),
+                    "cancel_url": request.build_absolute_uri(reverse("frontend:payment_cancel")),
+                },
+                "transactions": [
+                    {
+                        "amount": {
+                            "total": total_amount,
+                            "currency": "USD",
+                        },
+                        "description": "Dịch vụ đưa rước học sinh",
+                    }
+                ],
+            })
+
+            if payment.create():
+                order.payment_id = payment.id
+                order.save()
+                return redirect(payment.links[1].href)
+            else:
+                return render(request, 'frontend:payment_cancel')
+
+        else:
+            for field_name, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field_name}: {error}")
+    else:
+        form = ScheduleForm(vehicle_type=vehicel_type, initial={'route': route_id})
+
+    form_errors = form.errors if form.errors else None
+
+    context = {
+        'route': route,
+        'route_details': route_details,
+        'time_package': time_package,
+        'vehicel_type': vehicel_type,
+        'pickup_time': pickup_time,
+        'distance': distance,
+        'form': form,
+        'form_errors': form_errors
+    }
+
     return render(request, 'frontend/checkout.html', context)
+
+
+class PaymentCancelView(TemplateView):
+    template_name = 'frontend/payment_cancel.html'
+
+
+def payment_success(request):
+    payment_id = request.GET.get('paymentId')
+    payer_id = request.GET.get('PayerID')
+
+    payment = paypalrestsdk.Payment.find(payment_id)
+
+    if payment.execute({"payer_id": payer_id}):
+        order = Order.objects.get(payment_id=payment_id)
+        order.save()
+        order_details = order.order_details.all()
+
+        for od in order_details:
+            od.status = Status.SUCCESS
+            od.save()
+
+        OrderStatus.objects.create(
+            order=order,
+            status=Status.SUCCESS
+        )
+
+        return render(request, 'frontend/payment_success.html', {'order': order})
+    else:
+        return render(request, 'frontend/payment_cancel.html')
 
 
 def register(request):
@@ -107,7 +269,7 @@ def loginPage(request):
 
 def logoutPage(request):
     logout(request)
-    return redirect('frontend:login')
+    return redirect('frontend:home')
 
 
 def search(request):
@@ -378,3 +540,32 @@ def route_detail_view(request, route_id):
             'route_details': route_details
         }
     )
+
+
+@login_required
+def schedule_manage(request, schedule_id):
+    user = request.user
+    customer = user.customers
+
+    schedule = Schedule.objects.get(id=schedule_id)
+    students_trip = StudentTrip.objects.filter(schedule=schedule)
+
+    if request.method == 'POST':
+        form = StudentTripForm(request.POST, request.FILES, initial={'schedule': schedule_id})
+        if form.is_valid():
+            form.save()
+            return redirect('frontend:schedule_manage', schedule_id=schedule_id)
+    else:
+        form = StudentTripForm(customer=customer, initial={'schedule': schedule_id})
+
+    form_errors = form.errors if form.errors else None
+
+    context = {
+        "schedule": schedule,
+        "students_trip": students_trip,
+        "form": form,
+        "form_errors": form_errors,
+        "user": user
+    }
+
+    return render(request, 'frontend/schedule_manage.html', context)

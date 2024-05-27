@@ -4,7 +4,7 @@
 
 <div class="card mb-4">
     <div class="card-header py-3">
-      <h5 class="mb-0">Station</h5>
+      <h5 class="mb-0">Trạm dừng</h5>
     </div>
     <div class="card-body">
       {% for station in stations %}
@@ -29,7 +29,7 @@
               <button type="button" class="btn btn-primary btn-sm" onclick="openEditModal({{ station.id }})" data-mdb-tooltip-init title="Edit item">
                   <i class="fas fa-edit"></i>
               </button>
-              <button type="button" class="btn btn-danger btn-sm me-1 mb-2" data-mdb-tooltip-init title="Remove item" onclick="openConfirmDeleteModal()" title="Remove item">
+              <button type="button" class="btn btn-danger btn-sm me-1 mb-2" data-mdb-tooltip-init title="Remove item" onclick="openConfirmDeleteModal({{ station.id }})" title="Remove item">
                   <i class="fas fa-trash"></i>
               </button>
           </div>
@@ -41,7 +41,7 @@
 
       <a style="display: flex; justify-content: center; align-items: center;">
         <button type="button" class="btn btn-success btn-sm me-1 mb-2" data-toggle="modal" data-target="#addstationModal">
-            <i class="fas fa-plus"></i> Add station
+            <i class="fas fa-plus"></i> Thêm trạm dừng
         </button>
       </a>
 
@@ -50,7 +50,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addstationModalLabel">Add station</h5>
+                    <h5 class="modal-title" id="addstationModalLabel">Thêm trạm dừng</h5>
                 </div>
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %} <!-- CSRF token -->
@@ -72,7 +72,7 @@
                         <!-- Nút Close để đóng modal -->
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <!-- Nút Submit để gửi form -->
-                        <button type="submit" class="btn btn-primary">Add station</button>
+                        <button type="submit" class="btn btn-primary">Thêm trạm dừng</button>
                     </div>
                 </form>
             </div>
@@ -91,7 +91,7 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="editstationModalLabel">Edit station</h5>
+              <h5 class="modal-title" id="editstationModalLabel">Sửa trạm dừng</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -104,7 +104,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" onclick="saveEditedstation()">Save changes</button>
+              <button type="button" class="btn btn-primary" onclick="saveEditedstation()">Lưu</button>
             </div>
           </div>
         </div>
@@ -128,7 +128,7 @@
           </div>
         </div>
       </div>
-
+      <input type="hidden" id="remove_station_id" name="id" value="">
     </div>
 </div>
 
@@ -198,12 +198,13 @@
         });
     }
 
-    function openConfirmDeleteModal() {
+    function openConfirmDeleteModal(station_id) {
+      document.getElementById("remove_station_id").value = station_id
       $('#confirmDeleteModal').modal('show');
     }
 
     $('#confirmDeleteBtn').on('click', function() {
-      var stationId = $("#station_id").val();
+      var stationId = $("#remove_station_id").val();
 
       $.ajax({
           url: '/service/api/v1/delete-station/' + stationId,

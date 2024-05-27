@@ -24,14 +24,14 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Tuyến đường đi</h5>
-          <div id="html_select_list_router">
+          <div style="height:200px;" id="html_select_list_router">
           </div>
         </div>
       </div>
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Trạm</h5>
-          <div id="html_list_detail_router">
+          <div style="height:200px;" id="html_list_detail_router">
 
           </div>
         </div>
@@ -45,7 +45,7 @@
     <div class="col-2">
       <div>
         <label class="mb-2">Loại xe</label>
-        <select class="form-select border border-secondary" style="height: 35px;">
+        <select id="vehicel-type" class="form-select border border-secondary" style="height: 35px;">
           <option>16 chỗ</option>
           <option>29 chỗ</option>
           <option>45 chỗ</option>
@@ -54,7 +54,7 @@
         </p>
       <div>
         <label class="mb-2">Thời gian</label>
-        <select class="form-select border border-secondary" style="height: 35px;">
+        <select id="time-package" class="form-select border border-secondary" style="height: 35px;">
           <option>3 tháng</option>
           <option>6 tháng</option>
           <option>9 tháng</option>
@@ -63,25 +63,8 @@
         </p>
       <div>
         <label class="mb-2">Thời gian đón</label>
-        <select class="form-select border border-secondary" style="height: 35px;">
-          <option>7:00</option>
-          <option>13:00</option>
-        </select>
+        <input type="time" id="pickup-time" name="time" required>
       </div>
-        </p>
-      <div>
-        <label class="mb-2 d-block">Quantity</label>
-        <div class="input-group mb-3" style="width: 170px;">
-            <button class="btn btn-white border border-secondary px-3" type="button" id="decreaseBtn" data-mdb-ripple-color="dark">
-                <i class="fas fa-minus"></i>
-            </button>
-            <input type="text" id="quantityInput" class="form-control text-center border border-secondary" value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" />
-            <button class="btn btn-white border border-secondary px-3" type="button" id="increaseBtn" data-mdb-ripple-color="dark">
-                <i class="fas fa-plus"></i>
-            </button>
-        </div>
-      </div>
-
       <script>
         // Lấy ra các phần tử cần thiết
         const decreaseBtn = document.getElementById('decreaseBtn');
@@ -105,17 +88,13 @@
         });
       </script>
       <hr />
-
       <div>
-        <span class="h5">$75.00</span>
-      </div>
-        </p>
-      <div>
-        <a href="{% url 'frontend:checkout'%}" class="btn btn-warning shadow-0"> Buy now </a>
-        <a class="btn btn-primary shadow-0"> <i class="sm-1 fa fa-shopping-basket"></i></a>
+        <a id="buy-now-btn" class="btn btn-warning shadow-0">Đặt dịch vụ</a>
       </div>
     </div>
   </div>
+  <input type="hidden" id="route_id" name="route_id" value="">
+  <input type="hidden" id="output_distance" name="output_distance" value=0>
 </section>
 <script>
   let origin_url = window.location.origin;
@@ -129,6 +108,7 @@
   let html_select_ending_point = document.getElementById('html_select_ending_point');
   let html_select_list_router = document.getElementById('html_select_list_router');
   let html_list_detail_router = document.getElementById('html_list_detail_router');
+  let route;
 
   //event load data starting point
   load_data_starting_point();
@@ -146,7 +126,7 @@
 
   async function display_stop_station(id){
     html_list_detail_router.innerHTML = ``;
-    detail_router=await fetch_detail_stop_station(id);
+    detail_router = await fetch_detail_stop_station(id);
         const div = document.createElement('div');
         var list_detail_chirden_station = '';
         sort_stop_station=detail_router.route_detail;
@@ -171,7 +151,7 @@
          `;
     html_list_detail_router.appendChild(div);
 
-  
+
     var pickup=detail_router?.pickup;
     var dropoff=detail_router?.dropoff;
 
@@ -181,14 +161,16 @@
         url += `/${item?.station?.latitude},${item?.station?.longitude}`;
     });
     url += `/${dropoff.latitude},${dropoff.longitude}`;
-    
+
     window.open(`${url}`, '_blank', 'width=800,height=600');
   }
   async function fetch_detail_stop_station(id) {
     return fetch(`${origin_url}/service/api/v1/get-route/${id}`)
         .then(response => response.json())
         .then(data => {
-            if (data.data) {return data.data;}
+            if (data.data) {
+              return data.data
+            ;}
             throw new Error('No data found');
         })
         .catch(error => {
@@ -210,7 +192,8 @@
          `;
          div.addEventListener('click', function () {
             display_stop_station(item.id);
-
+            document.getElementById('route_id').value = item.id;
+            calculateDistances();
          });
          html_select_list_router.appendChild(div);
         })
@@ -247,7 +230,7 @@
             throw error;
         });
   }
-  
+
   function load_data_starting_point(){
     fetch_data_starting_point();
     function fetch_data_starting_point(id) {
@@ -274,7 +257,7 @@
       }
     }
   }
-  
+
   function load_data_router(){
     fetch_data_router();
     function fetch_data_router(id) {
@@ -290,5 +273,97 @@
           });
     }
   }
+
+  document.getElementById('buy-now-btn').addEventListener('click', function() {
+    const route_id = document.getElementById('route_id').value;
+    const timePackage = document.getElementById('time-package').value;
+    const pickupTime = document.getElementById('pickup-time').value;
+    const vehicelType = document.getElementById('vehicel-type').value;
+    const outputDistance = document.getElementById('output_distance').value;
+
+    if (!pickupTime) {
+      alert('Vui lòng chọn thời gian đón.');
+      return;
+    }
+
+    if (!route_id) {
+      alert('Vui lòng chọn tuyến đường.');
+      return;
+    }
+
+    if (!timePackage) {
+      alert('Vui lòng chọn gói thời gian.');
+      return;
+    }
+
+    if (!vehicelType) {
+      alert('Vui lòng chọn loại xe.');
+      return;
+    }
+
+    const queryString = new URLSearchParams({
+        route_id: route_id,
+        time_package: timePackage,
+        pickup_time: pickupTime,
+        vehicel_type: vehicelType,
+        distance: outputDistance
+    }).toString();
+
+    window.location.href = `{% url 'frontend:checkout' %}?` + queryString;
+  });
+
+  async function calculateDistances() {
+    let route_id = document.getElementById('route_id').value
+    detail_router = await fetch_detail_stop_station(route_id);
+
+    const pickup = { lat: detail_router.pickup.latitude, lng: detail_router.pickup.longitude };
+    const dropoff = { lat: detail_router.dropoff.latitude, lng: detail_router.dropoff.longitude };
+
+    const sorted_route_detail = detail_router.route_detail.sort((a, b) => a.sequence - b.sequence);
+
+    const sort_stop_station = sorted_route_detail.map(detail => {
+        return {
+            station: {
+                lat: parseFloat(detail.station.latitude),
+                lng: parseFloat(detail.station.longitude)
+            }
+        };
+    });
+
+    console.log(sort_stop_station)
+
+    const waypoints = sort_stop_station.map(item => {
+        return {
+            location: new google.maps.LatLng(item.station.lat, item.station.lng),
+            stopover: true
+        };
+    });
+
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer();
+
+    const request = {
+        origin: new google.maps.LatLng(pickup.lat, pickup.lng),
+        destination: new google.maps.LatLng(dropoff.lat, dropoff.lng),
+        waypoints: waypoints,
+        travelMode: google.maps.TravelMode.DRIVING,
+    };
+
+    directionsService.route(request, function(result, status) {
+        if (status === 'OK') {
+            let totalDistance = 0;
+            let route = result.routes[0];
+            for (let i = 0; i < route.legs.length; i++) {
+                totalDistance += route.legs[i].distance.value; // khoảng cách tính bằng mét
+            }
+            totalDistance = totalDistance / 1000;
+            totalDistance = Math.ceil(totalDistance * 100) / 100;
+            document.getElementById('output_distance').value = totalDistance.toFixed(1)
+        } else {
+            alert('Directions request failed due to ' + status);
+        }
+    });
+  }
+
 </script>
 {% endblock cart %}

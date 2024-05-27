@@ -48,6 +48,7 @@ _THIRD_PARTY_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
+    'paypal.standard.ipn',
 ]
 
 _PROJECT_APPS = [
@@ -104,8 +105,8 @@ DATABASES = {
         'NAME': 'duaruoc',
         'USER': 'root',
         'PASSWORD': 'Dai12321!',
-        'HOST': '192.168.101.55',  # Địa chỉ của MySQL server, 'localhost' cho cài đặt cục bộ
-        'PORT': '3306',       # Cổng mặc định của MySQL
+        'HOST': '192.168.101.129',
+        'PORT': '3306',
     }
 }
 
@@ -155,3 +156,6 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+PAYPAL_CLIENT_ID = 'Afqc-QDyPrhO48ek-5snQxT698jQUNpxyMRB9d3O8n_BtHoAfGeE4DbY1S10xhuj9uQhPe99Wu8GwIed'
+PAYPAL_SECRET = 'EEdms_KUC5saeNAbWL9Rjguvc9R99ERMBlOaBasnzBJXxheeLJRoyMAlDlZSxtbwiw0djjTeT_o0UVTp'

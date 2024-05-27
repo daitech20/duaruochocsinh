@@ -5,7 +5,8 @@ from django import forms
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
-from service.models import Route, RouteDetail, Station, Vehicle
+from service.models import (Route, RouteDetail, Schedule, Station, StudentTrip,
+                            TripDetail, Vehicle)
 
 
 class CustomUserCreationForm(forms.ModelForm):
@@ -173,3 +174,56 @@ class RouteDetailForm(forms.ModelForm):
     class Meta:
         model = RouteDetail
         fields = ['station', 'sequence']
+
+
+class ScheduleForm(forms.ModelForm):
+    class Meta:
+        model = Schedule
+        fields = ['start_day', 'end_day', 'distance', 'pickup_time', 'route', 'vehicle', 'driver', 'employee']
+        widgets = {
+            'start_day': forms.DateInput(attrs={'type': 'date'}),
+            'end_day': forms.DateInput(attrs={'type': 'date'}),
+            'pickup_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        vehicle_type = kwargs.pop('vehicle_type', None)
+        super(ScheduleForm, self).__init__(*args, **kwargs)
+        if vehicle_type:
+            self.fields['vehicle'].queryset = Vehicle.objects.filter(vehicle_type=vehicle_type)
+
+
+class StudentTripForm(forms.ModelForm):
+    class Meta:
+        model = StudentTrip
+        fields = ('schedule', 'student')
+
+    def __init__(self, *args, **kwargs):
+        customer = kwargs.pop('customer', None)
+        print(customer)
+        super(StudentTripForm, self).__init__(*args, **kwargs)
+        if customer:
+            self.fields['student'].queryset = Student.objects.filter(customer=customer)
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+
+        return user
+
+
+class TripDetailForm(forms.ModelForm):
+    class Meta:
+        model = TripDetail
+        fields = ('start_time', 'schedule')
+        widgets = {
+            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+
+        return user

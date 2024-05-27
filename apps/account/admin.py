@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from account.models import (CitizenIdentification, Customer,
+from account.models import (CitizenIdentification, Customer, Driver, Employee,
                             RepresentativeUnit, Student, User)
 from django.contrib import admin
 
@@ -62,3 +62,7 @@ class StudentAdmin(admin.ModelAdmin):
         'image',
         'customer'
     )
+
+
+admin.site.register(Driver)
+admin.site.register(Employee)
