@@ -9,17 +9,6 @@
                 {% if user.customers %}
                 <li><a class="list-group-item" href="{% url 'frontend:yourChild'%}">Danh sách học sinh</a></li>
                 {% endif %}
-                {% if user.is_staff%}
-                    {% if user.is_staff %}
-                    <li><a class="list-group-item" href="{% url 'frontend:vehicle'%}">Phương tiện</a></li>
-                    {% endif %}
-                    {% if user.is_staff %}
-                    <li><a class="list-group-item" href="{% url 'frontend:station'%}">Trạm dừng</a></li>
-                    {% endif %}
-                    {% if user.is_staff %}
-                    <li><a class="list-group-item" href="{% url 'frontend:route'%}">Tuyến đường</a></li>
-                    {% endif %}
-                {% endif %}
                 <li><a class="list-group-item" href="{% url 'frontend:logout'%}">Đăng xuất</a></li>
             </ul>
         </div>

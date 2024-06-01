@@ -20,3 +20,4 @@ class Status(models.TextChoices):
     INACTIVE = "inactive"
     PENDING = "pending"
     SUCCESS = "success"
+    CANCEL = "cancel"

@@ -5,7 +5,9 @@ from service.api.serializers import (AttendanceSerializer,
                                      RouteDetailSerializer, RouteDSerializer,
                                      RouteSerializer, StationSerializer,
                                      StudentTripSerializer,
-                                     TripDetailSerializer, VehicleSerializer)
+                                     TripDetailSerializer,
+                                     TripDetailUpdateSerializer,
+                                     VehicleSerializer)
 from service.models import (Attendance, Route, RouteDetail, Station,
                             StudentTrip, TripDetail, Vehicle)
 
@@ -268,6 +270,41 @@ class TripDetailView(generics.RetrieveAPIView):
             serializer = self.get_serializer(instance)
             return success_api_resp(data=serializer.data)
         except Exception as e:
+            raise ErrorResponseException(error=str(e))
+
+
+class TripDetailUpdateView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = TripDetail.objects.all()
+    serializer_class = TripDetailUpdateSerializer
+    lookup_field = 'id'
+    permission_classes = []
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return success_api_resp(data=serializer.data)
+        except Exception as e:
+            raise ErrorResponseException(error=str(e))
+
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return success_api_resp(data=serializer.data)
+            else:
+                raise ErrorResponseException(error=serializer.errors)
+        except Http404 as e:
+            raise ErrorResponseException(error=str(e))
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            instance.delete()
+            return success_api_resp(data=[])
+        except Http404 as e:
             raise ErrorResponseException(error=str(e))
 
 

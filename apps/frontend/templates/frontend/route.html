@@ -1,4 +1,4 @@
-{% extends 'frontend/personal.html' %}
+{% extends 'frontend/manage.html' %}
 {% load static %}
 {% block personalInformation %}
 
@@ -29,7 +29,7 @@
               <button type="button" class="btn btn-primary btn-sm" onclick="openEditModal({{ route.id }})" data-mdb-tooltip-init title="Edit item">
                   <i class="fas fa-edit"></i>
               </button>
-              <button type="button" class="btn btn-danger btn-sm me-1 mb-2" data-mdb-tooltip-init title="Remove item" onclick="openConfirmDeleteModal()" title="Remove item">
+              <button type="button" class="btn btn-danger btn-sm me-1 mb-2" data-mdb-tooltip-init title="Remove item" onclick="openConfirmDeleteModal({{route.id}})" title="Remove item">
                   <i class="fas fa-trash"></i>
               </button>
               <a href="{% url 'frontend:route_detail_view' route.id %}">
@@ -144,6 +144,8 @@
         </div>
       </div>
 
+      <input type="hidden" id="remove_route_id" name="id" value="">
+
     </div>
 </div>
 
@@ -223,12 +225,13 @@
         });
     }
 
-    function openConfirmDeleteModal() {
+    function openConfirmDeleteModal(remove_route_id) {
+      document.getElementById("remove_route_id").value = remove_route_id
       $('#confirmDeleteModal').modal('show');
     }
 
     $('#confirmDeleteBtn').on('click', function() {
-      var routeId = $("#route_id").val();
+      var routeId = $("#remove_route_id").val();
 
       $.ajax({
           url: '/service/api/v1/delete-route/' + routeId,

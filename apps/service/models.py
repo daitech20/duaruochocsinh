@@ -78,7 +78,7 @@ class TripDetail(BaseModel):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True)
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, related_name="schedule_trip_detail")
-    status = models.CharField(max_length=50, choices=Status.choices)
+    status = models.CharField(max_length=50, choices=Status.choices, default=Status.PENDING)
 
 
 class StudentTrip(BaseModel):

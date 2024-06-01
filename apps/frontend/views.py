@@ -99,9 +99,14 @@ def tripHistory(request, schedule_id):
         "trips_detail": trips_detail,
         "user_id": user.id
     }
-    if user.employees:
+
+    if hasattr(user, 'employees'):
         context.update({
             "employee_id": user.employees.id
+        })
+    else:
+        context.update({
+            "employee_id": 0
         })
 
     return render(request, 'frontend/tripHistory.html', context)
@@ -583,6 +588,15 @@ def thongke(request):
     return render(request, 'frontend/thongke.html', context)
 
 
-def user_manage(request):
+def employ_list(request):
     context = {}
-    return render(request, 'frontend/user_manage.html', context)
+    return render(request, 'frontend/employ_list.html', context)
+
+
+def driver_list(request):
+    context = {}
+    return render(request, 'frontend/driver_list.html', context)
+
+
+def manage(request):
+    return render(request, 'frontend/manage.html')

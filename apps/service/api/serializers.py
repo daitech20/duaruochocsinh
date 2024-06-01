@@ -145,3 +145,11 @@ class TripDetailSerializer(serializers.ModelSerializer):
             'status',
             'trip_detail_attendance',
         )
+
+
+class TripDetailUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TripDetail
+        fields = (
+            'status',
+        )

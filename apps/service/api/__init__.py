@@ -5,7 +5,8 @@ from service.api.views import (AttendanceCreate, AttendanceDetailView,
                                RouteDetailUpdateView, RouteDetailView,
                                RouteList, RouteUpdateView, StationDetail,
                                StationList, StudentTripDetail, StudentTripList,
-                               TripDetailView, VehicleDetail, VehicleList)
+                               TripDetailUpdateView, TripDetailView,
+                               VehicleDetail, VehicleList)
 
 urlpatterns = [
     path('list-vehicle', VehicleList.as_view(), name='list_vehicle'),
@@ -27,6 +28,7 @@ urlpatterns = [
     path('update-student-trip/<int:id>', StudentTripDetail.as_view(), name='update_student_trip'),
     path('delete-student-trip/<int:id>', StudentTripDetail.as_view(), name='delete_student_trip'),
     path('get-trip-detail/<int:id>', TripDetailView.as_view(), name='detail_trip_detail'),
+    path('update-trip-detail/<int:id>', TripDetailUpdateView.as_view(), name='update_trip_detail'),
     path('list-attendance', AttendanceList.as_view(), name='list_attendance'),
     path('create-attendance', AttendanceCreate.as_view(), name='create_attendance'),
     path('get-attendance/<int:id>', AttendanceDetailView.as_view(), name='get_attendance'),

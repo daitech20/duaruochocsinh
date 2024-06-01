@@ -159,10 +159,6 @@ class Employee(BaseModel):
     address = models.ForeignKey(Ward, on_delete=models.CASCADE,
                                 related_name="employee_address", null=True)
     address2 = models.CharField(max_length=50, null=True)
-    representative_unit = models.ForeignKey(RepresentativeUnit, on_delete=models.SET_NULL,
-                                            related_name="employee_representative_unit", null=True)
-
-    representative_unit_check = models.BooleanField(default=False)
     citizen_identification = models.ForeignKey(CitizenIdentification, on_delete=models.SET_NULL,
                                                related_name="employee_citizen_identification", null=True)
     date_of_birth = models.DateField(blank=True, null=True)
@@ -186,10 +182,6 @@ class Driver(BaseModel):
     address = models.ForeignKey(Ward, on_delete=models.CASCADE,
                                 related_name="driver_address", null=True)
     address2 = models.CharField(max_length=50, null=True)
-    representative_unit = models.ForeignKey(RepresentativeUnit, on_delete=models.SET_NULL,
-                                            related_name="driver_representative_unit", null=True)
-
-    representative_unit_check = models.BooleanField(default=False)
     citizen_identification = models.ForeignKey(CitizenIdentification, on_delete=models.SET_NULL,
                                                related_name="driver_citizen_identification", null=True)
     date_of_birth = models.DateField(blank=True, null=True)

@@ -22,9 +22,9 @@
           <h5 class="card-title">Danh sách chuyến đi</h5>
           <ul class="list-group list-group-flush">
 			{% for trip_detail in trips_detail %}
-            	<li style="margin-top: 10px; border-radius: 5px;cursor: pointer;" 
-					class="list-group-item trip-item" 
-					data-trip-id="{{ trip_detail.id }}">{{ trip_detail.start_time }}</li>
+            	<li style="margin-top: 10px; border-radius: 5px;cursor: pointer;"
+					class="list-group-item trip-item"
+					data-trip-id="{{ trip_detail.id }}">Chuyến đi ngày {{ trip_detail.start_time }}</li>
 			{% endfor %}
           </ul>
         </div>
@@ -33,8 +33,12 @@
     <div class="col-9">
         <div class="card" style="margin-bottom: 10px;">
             <div class="card-body">
-              <h5 class="card-title">Thông tin chuyến đi</h5>
+              <h5 class="card-title">Thông tin chuyến đi
+			  </h5>
               <ul class="list-group list-group-flush">
+				<li class="list-group-item">Trạng thái : <span id="status-info"></span>
+
+				</li>
                 <li class="list-group-item">Thông tin xe : <span id="vehicle-info"></span></li>
                 <li class="list-group-item">Tên tài xế : <span id="driver-name"></span></li>
                 <li class="list-group-item">Tên nhân viên : <span id="employee-name"></span></li>
@@ -64,25 +68,6 @@
               </tbody>
             </table>
           </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Lịch sử trạng thái</h5>
-              <hr>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">STT</th>
-                    <th scope="col">Tên học sinh</th>
-                    <th scope="col">Tên phụ huynh</th>
-                    <th scope="col">Số điện thoại</th>
-                    <th scope="col">Trạng thái</th>
-                  </tr>
-                </thead>
-                <tbody>
-
-              </table>
-            </div>
         </div>
     </div>
 </div>
@@ -141,6 +126,20 @@
 	const employee_id = {{employee_id}};
 	let tripIdRaw;
 
+	function updateStatusTripDetail(tripDetailId) {
+        fetch(`/service/api/v1/update-trip-detail/${tripDetailId}`, {  method: "PATCH",headers: {"X-CSRFToken": csrftoken,"Content-Type": "application/json"},
+		body: JSON.stringify({
+			status:"success"
+		})})
+            .then(response => response.json())
+            .then(data => {
+				window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error fetching attendance:', error);
+            });
+    }
+
 	function fetchAttendance(studentId, tripDetailId) {
         const url = `/service/api/v1/create-attendance`;
         fetch(url,{  method: "POST",headers: {"X-CSRFToken": csrftoken,"Content-Type": "application/json"},
@@ -193,13 +192,22 @@
 					.then(response => response.json())
 					.then(data => {
 						data = data.data
+						document.getElementById('status-info').innerText = data.status;
+						const statusInfo=`
+							<button style="border-radius: 5px; background-color: #387eff;color: white;" onclick="updateStatusTripDetail(${tripId})">
+								Hoàn thành chuyến
+							</button>
+						`;
+						if (data.status != "success") {
+							document.getElementById('status-info').insertAdjacentHTML('beforeend', statusInfo);
+						}
 						document.getElementById('vehicle-info').innerText = data.schedule.vehicle.code;
 						document.getElementById('driver-name').innerText = data.schedule.driver.full_name;
 						document.getElementById('employee-name').innerText = data.schedule.employee.full_name;
 						document.getElementById('start-time').innerText = data.start_time;
-						
+
 						const studentList = document.getElementById('student-status-list');
-						studentList.innerHTML = ''; 
+						studentList.innerHTML = '';
 						data.schedule.schedule_student_trip.forEach((student, index) => {
 							const row = `
 								<tr>
@@ -208,7 +216,7 @@
 									<td>${student.student.customer.full_name}</td>
 									<td>${student.student.customer.user.phone}</td>
 									${checkAttendance(data?.trip_detail_attendance,student.student.id,data.id)}
-									
+
 								</tr>
 							`;
 							studentList.insertAdjacentHTML('beforeend', row);

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block cart %}
+<div class="container">
+    <div class="row">
+		<div class="col-3">
+            <ul class="list-group list-group-flush">
+                {% if user.is_superuser %}
+                <li><a class="list-group-item" href="{% url 'frontend:driver_list'%}">Tài xế</a></li>
+                {% endif %}
+
+                {% if user.is_superuser %}
+                <li><a class="list-group-item" href="{% url 'frontend:employ_list'%}">Nhân viên</a></li>
+                {% endif %}
+
+                {% if user.is_staff%}
+                    {% if user.is_staff %}
+                    <li><a class="list-group-item" href="{% url 'frontend:vehicle'%}">Phương tiện</a></li>
+                    {% endif %}
+                    {% if user.is_staff %}
+                    <li><a class="list-group-item" href="{% url 'frontend:station'%}">Trạm dừng</a></li>
+                    {% endif %}
+                    {% if user.is_staff %}
+                    <li><a class="list-group-item" href="{% url 'frontend:route'%}">Tuyến đường</a></li>
+                    {% endif %}
+                {% endif %}
+
+            </ul>
+        </div>
+
+        <div class="col-7">
+            {% block personalInformation %} {% endblock personalInformation %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock cart %}

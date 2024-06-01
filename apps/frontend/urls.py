@@ -39,5 +39,7 @@ urlpatterns = [
     path('payment-success', views.payment_success, name='payment_success'),
     path('schedule-manage/<int:schedule_id>', views.schedule_manage, name='schedule_manage'),
     path('thongke', views.thongke, name='thongke'),
-    path('user-manage', views.user_manage, name='user_manage'),
+    path('manage', views.manage, name='manage'),
+    path('list-driver', views.driver_list, name='driver_list'),
+    path('list-employee', views.employ_list, name='employ_list'),
 ]
