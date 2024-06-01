@@ -105,7 +105,7 @@ DATABASES = {
         'NAME': 'duaruoc',
         'USER': 'root',
         'PASSWORD': 'Dai12321!',
-        'HOST': '10.252.1.165',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }
